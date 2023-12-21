@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="843.0" prefWidth="1450.0" style="-fx-background-color: #FADD394F;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.PastryPal.controller.MainFormController">
+   <children>
+      <AnchorPane layoutX="25.0" layoutY="14.0" prefHeight="809.0" prefWidth="223.0" style="-fx-background-color: white; -fx-background-radius: 25;" styleClass="btnRoot" stylesheets="@../style/drop_shadow.css">
+         <children>
+            <ImageView fitHeight="110.0" fitWidth="104.0" layoutX="58.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../icons/icons8-chef-100.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="32.0" fitWidth="40.0" layoutX="94.0" layoutY="748.0" onMouseClicked="#btnLogoutOnAction" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../icons/logout.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <Label layoutX="51.0" layoutY="113.0" prefHeight="32.0" prefWidth="118.0" text="..WELCOME.." textFill="#faa60f">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="lblUser" alignment="CENTER" layoutX="54.0" layoutY="135.0" prefHeight="35.0" prefWidth="110.0" textFill="#faa60f">
+               <font>
+                  <Font name="Serif Bold Italic" size="16.0" />
+               </font>
+            </Label>
+            <Line endX="100.0" layoutX="112.0" layoutY="200.0" startX="-100.0" stroke="#bc8f14" strokeWidth="2.0" />
+            <Line endX="100.0" layoutX="112.0" layoutY="730.0" startX="-100.0" stroke="#bc8f14" strokeWidth="2.0" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="mainNode" layoutX="280.0" layoutY="18.0" prefHeight="751.0" prefWidth="1142.0" style="-fx-background-radius: 25;" />
+      <JFXButton fx:id="btnDashboard" layoutX="49.0" layoutY="228.0" onAction="#btnDashBoardOnAction" prefHeight="40.0" prefWidth="199.0" stylesheets="@../style/main_btn.css" text="DashBoard">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </JFXButton>
+      <JFXButton fx:id="btnCustomers" layoutX="49.0" layoutY="353.0" onAction="#btnCustomerOnAction" prefHeight="40.0" prefWidth="199.0" stylesheets="@../style/main_btn.css" text="Customers">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </JFXButton>
+      <ImageView fitHeight="40.0" fitWidth="30.0" layoutX="56.0" layoutY="233.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../icons/icons8-dashboard.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="40.0" fitWidth="30.0" layoutX="55.0" layoutY="359.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../icons/icons8-customers.png" />
+         </image>
+      </ImageView>
+      <JFXButton fx:id="btnOrders" layoutX="49.0" layoutY="288.0" onAction="#btnOrderOnAction" prefHeight="40.0" prefWidth="199.0" stylesheets="@../style/main_btn.css" text="Orders">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </JFXButton>
+      <ImageView fitHeight="40.0" fitWidth="30.0" layoutX="57.0" layoutY="292.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../icons/icons8-minimum-order.png" />
+         </image>
+      </ImageView>
+      <JFXButton fx:id="btnSuppliers" layoutX="49.0" layoutY="545.0" onAction="#btnSupplierOnAction" prefHeight="40.0" prefWidth="199.0" stylesheets="@../style/main_btn.css" text="Suppliers">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </JFXButton>
+      <ImageView fitHeight="40.0" fitWidth="30.0" layoutX="56.0" layoutY="552.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../icons/icons8-supplier.png" />
+         </image>
+      </ImageView>
+      <JFXButton fx:id="btnMaterials" layoutX="49.0" layoutY="483.0" onAction="#btnMaterialsOnAction" prefHeight="40.0" prefWidth="199.0" stylesheets="@../style/main_btn.css" text="Items">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </JFXButton>
+      <JFXButton fx:id="btnItems" layoutX="49.0" layoutY="418.0" onAction="#btnItemsOnAction" prefHeight="40.0" prefWidth="199.0" stylesheets="@../style/main_btn.css" text="Products">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </JFXButton>
+      <ImageView fitHeight="40.0" fitWidth="30.0" layoutX="56.0" layoutY="487.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../icons/stock.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="40.0" fitWidth="30.0" layoutX="56.0" layoutY="423.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../icons/items.png" />
+         </image>
+      </ImageView>
+      <JFXButton fx:id="btnEmployee" layoutX="49.0" layoutY="616.0" onAction="#btnEmployeeOnAction" prefHeight="40.0" prefWidth="199.0" stylesheets="@../style/main_btn.css" text="Employees">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </JFXButton>
+      <ImageView fitHeight="40.0" fitWidth="30.0" layoutX="56.0" layoutY="620.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../icons/icons8-employees.png" />
+         </image>
+      </ImageView>
+      <JFXButton fx:id="btnComplains" layoutX="49.0" layoutY="680.0" onAction="#btnComplainsOnAction" prefHeight="40.0" prefWidth="199.0" stylesheets="@../style/main_btn.css" text="Complains" textFill="#141414">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </JFXButton>
+      <ImageView fitHeight="40.0" fitWidth="30.0" layoutX="56.0" layoutY="686.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../icons/complain.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="47.0" fitWidth="54.0" layoutX="835.0" layoutY="772.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../icons/icons8-bread-and-rye-100.png" />
+         </image>
+      </ImageView>
+      <Line endX="100.0" layoutX="727.0" layoutY="803.0" startX="-115.0" stroke="#bc8f14" strokeWidth="2.0" />
+      <Line endX="100.0" layoutX="1007.0" layoutY="803.0" startX="-115.0" stroke="#bc8f14" strokeWidth="2.0" />
+   </children>
+</AnchorPane>
