@@ -1,6 +1,5 @@
 package lk.ijse.PastryPal.controller;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
@@ -15,12 +14,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
+import lk.ijse.PastryPal.DAO.Custom.ComplainDAO;
+import lk.ijse.PastryPal.DAO.Custom.impl.ComplainDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.ComplainDto;
 import lk.ijse.PastryPal.dto.tm.ComplainTm;
-import lk.ijse.PastryPal.dto.tm.CustomerTm;
-import lk.ijse.PastryPal.model.ComplainModel;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -68,7 +67,7 @@ public class ComplainsFormController {
     @FXML
     private Label lblComplainSaveOrNot;
 
-    private ComplainModel complainModel = new ComplainModel();
+    ComplainDAO complainDAO = new ComplainDAOImpl();
     private ObservableList<ComplainTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -83,7 +82,7 @@ public class ComplainsFormController {
     private void generateNextComplainID() {
         try {
             String previousComplainID = lblComplainID.getText();
-            String complainID = complainModel.generateNextComplainID();
+            String complainID = complainDAO.generateNextComplainID();
             lblComplainID.setText(complainID);
             clearFields();
             if (btnClearPressed){
@@ -155,7 +154,7 @@ public class ComplainsFormController {
     private void loadAllComplains() {
         try {
             obList.clear();
-            List<ComplainDto> dtoList = complainModel.getAllComplains();
+            List<ComplainDto> dtoList = complainDAO.getAllComplains();
             for (ComplainDto dto : dtoList){
                 obList.add(
                         new ComplainTm(
@@ -187,7 +186,7 @@ public class ComplainsFormController {
         } else {
             var dto = new ComplainDto(id , complain , date);
             try {
-                boolean isSaved = complainModel.saveComplain(dto);
+                boolean isSaved = complainDAO.saveComplain(dto);
                 if (isSaved){
                     obList.clear();
                     totalComplains();
@@ -229,7 +228,7 @@ public class ComplainsFormController {
         }else {
             var dto = new ComplainDto(id , complain , date);
             try {
-                boolean isUpdated = complainModel.updateComplains(dto);
+                boolean isUpdated = complainDAO.updateComplains(dto);
                 if (isUpdated){
                     obList.clear();
                     totalComplains();
@@ -270,7 +269,7 @@ public class ComplainsFormController {
             new Alert(Alert.AlertType.ERROR,"Can not Delete Complain.Date is empty").showAndWait();
         } else {
             try {
-                boolean isDeleted = complainModel.deleteComplains(id);
+                boolean isDeleted = complainDAO.deleteComplains(id);
                 if (isDeleted){
                     obList.clear();
                     totalComplains();

@@ -68,6 +68,5 @@ CREATE TABLE complains(
 	complain_id varchar(10)primary key,
 	description varchar(250),
 	complain_date date,
-	customer_id varchar(10),
 );
 

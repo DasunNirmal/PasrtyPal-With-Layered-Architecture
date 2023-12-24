@@ -1,5 +1,6 @@
-package lk.ijse.PastryPal.model;
+package lk.ijse.PastryPal.DAO.Custom.impl;
 
+import lk.ijse.PastryPal.DAO.Custom.ComplainDAO;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.dto.ComplainDto;
 
@@ -7,11 +8,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComplainModel {
+public class ComplainDAOImpl implements ComplainDAO {
+
     private String splitComplainID(String currentComplainID){
         if (currentComplainID != null){
             String [] split = currentComplainID.split("[M]");
@@ -23,6 +24,7 @@ public class ComplainModel {
             return "M001";
         }
     }
+    @Override
     public String generateNextComplainID() throws SQLException {
         Connection connection = DbConnection.getInstance().getConnection();
 
@@ -35,6 +37,7 @@ public class ComplainModel {
         return splitComplainID(null);
     }
 
+    @Override
     public boolean saveComplain(ComplainDto dto) throws SQLException {
         Connection connection = DbConnection.getInstance().getConnection();
 
@@ -47,6 +50,7 @@ public class ComplainModel {
         return ptsm.executeUpdate() > 0;
     }
 
+    @Override
     public boolean updateComplains(ComplainDto dto) throws SQLException {
         Connection connection = DbConnection.getInstance().getConnection();
 
@@ -59,25 +63,7 @@ public class ComplainModel {
         return  ptsm.executeUpdate() > 0;
     }
 
-    public ComplainDto searchComplainByID(String searchId) throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-
-        String sql = "SELECT * FROM complains WHERE complain_id = ?";
-        PreparedStatement ptsm = connection.prepareStatement(sql);
-        ptsm.setString(1,searchId);
-        ResultSet resultSet = ptsm.executeQuery();
-
-        ComplainDto dto = null;
-        if (resultSet.next()){
-            String Complain_id = resultSet.getString(1);
-            String Complain_description = resultSet.getString(2);
-            LocalDate Complain_date = LocalDate.parse(resultSet.getString(3));
-
-            dto = new ComplainDto(Complain_id, Complain_description, Complain_date);
-        }
-        return dto;
-    }
-
+    @Override
     public boolean deleteComplains(String id) throws SQLException {
         Connection connection = DbConnection.getInstance().getConnection();
 
@@ -87,6 +73,7 @@ public class ComplainModel {
         return ptsm.executeUpdate() > 0;
     }
 
+    @Override
     public List<ComplainDto> getAllComplains() throws SQLException {
         Connection connection = DbConnection.getInstance().getConnection();
 
