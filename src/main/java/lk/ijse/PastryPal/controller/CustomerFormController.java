@@ -14,11 +14,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
+import lk.ijse.PastryPal.DAO.Custom.CustomerDAO;
+import lk.ijse.PastryPal.DAO.Custom.impl.CustomerDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.CustomerDto;
 import lk.ijse.PastryPal.dto.tm.CustomerTm;
-import lk.ijse.PastryPal.model.CustomerModel;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -80,7 +81,7 @@ public class CustomerFormController {
     @FXML
     private Label lblCustomerSaveOrNot;
 
-    private CustomerModel customerModel = new CustomerModel();
+    CustomerDAO customerDAO = new CustomerDAOImpl();
     private ObservableList<CustomerTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -90,34 +91,30 @@ public class CustomerFormController {
         loadAllCustomers();
         tableListener();
         totalCustomers();
-        totalLoyalityCustomers();
+        totalLoyaltyCustomers();
     }
 
-    private void totalLoyalityCustomers() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT COUNT(*) FROM customer WHERE name IS NOT NULL;";
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        int count = resultSet.getInt(1);
-        lblCustomers.setText(String.valueOf(count));
+    private void totalLoyaltyCustomers() throws SQLException {
+        try {
+            String getLoyaltyCustomers = customerDAO.getCountOFLotalty();
+            lblCustomers.setText(String.valueOf(getLoyaltyCustomers));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void totalCustomers() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT count(*) FROM customer";
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        int count = resultSet.getInt(1);
-        lblTotalCustomers.setText(String.valueOf(count));
+        try {
+            String totalCustomers = customerDAO.getTotalCustomers();
+            lblTotalCustomers.setText(String.valueOf(totalCustomers));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
     private void  generateNextCustomerID(){
         try {
             String previousCustomerID = lblCustomerId.getText();
-            String customerID = customerModel.generateNextCustomer();
+            String customerID = customerDAO.generateNextCustomer();
             lblCustomerId.setText(customerID);
             clearFields();
             if (btnClearPressed){
@@ -125,6 +122,8 @@ public class CustomerFormController {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
     private boolean btnClearPressed = false;
@@ -177,7 +176,7 @@ public class CustomerFormController {
     private void loadAllCustomers() {
         try {
             obList.clear();
-            List<CustomerDto> dtoList = customerModel.getAllCustomer();
+            List<CustomerDto> dtoList = customerDAO.getAllCustomer();
             for (CustomerDto dto : dtoList){
                 obList.add(
                         new CustomerTm(
@@ -191,6 +190,8 @@ public class CustomerFormController {
             tblCustomer.setItems(obList);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -217,13 +218,13 @@ public class CustomerFormController {
 
             var dto = new CustomerDto(id,name,address,phoneNumber);
             try {
-                boolean isSaved = customerModel.save(dto);
+                boolean isSaved = customerDAO.save(dto);
                 if (isSaved){
                     generateNextCustomerID();
                     obList.clear();
                     loadAllCustomers();
                     totalCustomers();
-                    totalLoyalityCustomers();
+                    totalLoyaltyCustomers();
                     lblCustomerSaveOrNot.setText("Customer Is Saved");
                     PauseTransition pause = new PauseTransition(Duration.seconds(2));
                     pause.setOnFinished(pauseEvent -> {
@@ -241,6 +242,8 @@ public class CustomerFormController {
                 }
             }catch (SQLException e){
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -268,12 +271,12 @@ public class CustomerFormController {
             try {
                 var dto = new CustomerDto(id,name,address,phoneNumber);
                 try {
-                    boolean isUpdated = customerModel.updateCustomer(dto);
+                    boolean isUpdated = customerDAO.updateCustomer(dto);
                     if (isUpdated){
                         obList.clear();
                         loadAllCustomers();
                         totalCustomers();
-                        totalLoyalityCustomers();
+                        totalLoyaltyCustomers();
                         generateNextCustomerID();
                         lblCustomerSaveOrNot.setText("Customer Is Updated !");
 
@@ -291,6 +294,8 @@ public class CustomerFormController {
                         clearFields();
                     });
                     pause.play();
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
             } catch (NumberFormatException e) {
                 new Alert(Alert.AlertType.ERROR,"In Valid Phone Number Format").showAndWait();
@@ -319,11 +324,11 @@ public class CustomerFormController {
             new Alert(Alert.AlertType.ERROR,"Can Not Delete.Phone Number is Empty").showAndWait();
         }else {
             try {
-                boolean isDeleted = customerModel.deleteCustomers(id);
+                boolean isDeleted = customerDAO.deleteCustomers(id);
                 if (isDeleted){
                     obList.clear();
                     loadAllCustomers();
-                    totalLoyalityCustomers();
+                    totalLoyaltyCustomers();
                     generateNextCustomerID();
                     totalCustomers();
                     lblCustomerSaveOrNot.setText("Customer Is Deleted !");
@@ -344,6 +349,8 @@ public class CustomerFormController {
                 }
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }

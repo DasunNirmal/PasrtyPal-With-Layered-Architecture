@@ -11,18 +11,18 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
+import lk.ijse.PastryPal.DAO.Custom.CustomerDAO;
+import lk.ijse.PastryPal.DAO.Custom.impl.CustomerDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.CustomerDto;
 import lk.ijse.PastryPal.dto.OrderDto;
 import lk.ijse.PastryPal.dto.ProductDto;
 import lk.ijse.PastryPal.dto.tm.OrderTm;
-import lk.ijse.PastryPal.model.CustomerModel;
 import lk.ijse.PastryPal.model.OrderModel;
 import lk.ijse.PastryPal.model.ProductModel;
 import lombok.SneakyThrows;
 import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.design.JRDesignQuery;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
@@ -36,7 +36,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 public class OrderFormController {
     @FXML
@@ -101,7 +100,7 @@ public class OrderFormController {
 
     @FXML
     private TextField txtSearchCustomer;
-    private CustomerModel customerModel = new CustomerModel();
+    CustomerDAO customerDAO = new CustomerDAOImpl();
     private ProductModel productModel = new ProductModel();
     private OrderModel orderModel = new OrderModel();
     private ObservableList<OrderTm> obList = FXCollections.observableArrayList();
@@ -118,7 +117,7 @@ public class OrderFormController {
     private void generateNextCustomerID() {
         try {
             String previousOrderID = lblCustomerID.getText();
-            String orderID = customerModel.generateNextCustomer();
+            String orderID = customerDAO.generateNextCustomer();
             lblCustomerID.setText(orderID);
             if (orderID != null) {
                 lblCustomerID.setText(orderID);
@@ -129,6 +128,8 @@ public class OrderFormController {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -280,9 +281,9 @@ public class OrderFormController {
         var customerDto = new CustomerDto(customerID,null,null,null);
         var orderDto = new OrderDto(orderID, date ,customerID ,orderTmList);
         try {
-            boolean checkCustomerID = customerModel.isValidCustomer(customerDto);
+            boolean checkCustomerID = customerDAO.isValidCustomer(customerDto);
             if (!checkCustomerID){
-                customerModel.save(customerDto);
+                customerDAO.save(customerDto);
             }
             boolean isSuccess = orderModel.placeOrder(orderDto);
             if (isSuccess){
@@ -326,10 +327,14 @@ public class OrderFormController {
     }
 
     private void autoCompleteCustomer() throws SQLException {
-        String [] phoneNumber = customerModel.getCustomerByPhoneNumber(txtSearchCustomer.getText());
-        String [] iD = customerModel.getCustomerByID(txtSearchCustomer.getText());
-        TextFields.bindAutoCompletion(txtSearchCustomer, phoneNumber);
-        TextFields.bindAutoCompletion(txtSearchCustomer, iD);
+        try {
+            String [] phoneNumber = customerDAO.getCustomerByPhoneNumber(txtSearchCustomer.getText());
+            String [] iD = customerDAO.getCustomerByID(txtSearchCustomer.getText());
+            TextFields.bindAutoCompletion(txtSearchCustomer, phoneNumber);
+            TextFields.bindAutoCompletion(txtSearchCustomer, iD);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void autoCompleteProduct() throws SQLException {
@@ -369,9 +374,9 @@ public class OrderFormController {
         try {
             CustomerDto customerDto;
             if (searchCustomer.matches("\\d+")) {
-                customerDto = customerModel.searchCustomerByPhoneNumber(searchCustomer);
+                customerDto = customerDAO.searchCustomerByPhoneNumber(searchCustomer);
             } else {
-                customerDto = customerModel.searchCustomer(searchCustomer);
+                customerDto = customerDAO.searchCustomer(searchCustomer);
             }
             if (customerDto != null) {
                 lblCustomerID.setText(customerDto.getCustomer_id());
@@ -384,6 +389,8 @@ public class OrderFormController {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
