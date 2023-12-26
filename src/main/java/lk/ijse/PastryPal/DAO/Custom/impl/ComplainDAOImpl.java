@@ -35,48 +35,25 @@ public class ComplainDAOImpl implements ComplainDAO {
     }
 
     @Override
-    public boolean saveComplain(ComplainDto dto) throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-
-        String sql = "INSERT INTO complains VALUES (?,?,?)";
-        PreparedStatement ptsm = connection.prepareStatement(sql);
-        ptsm.setString(1,dto.getComplain_id());
-        ptsm.setString(2,dto.getDescription());
-        ptsm.setString(3, String.valueOf(dto.getComplain_date()));
-
-        return ptsm.executeUpdate() > 0;
+    public boolean saveComplain(ComplainDto dto) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("INSERT INTO complains VALUES (?,?,?)",dto.getComplain_id(),dto.getDescription(),
+                dto.getComplain_date());
     }
 
     @Override
-    public boolean updateComplains(ComplainDto dto) throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-
-        String sql = "UPDATE complains SET description = ?,complain_date = ? WHERE complain_id = ?";
-        PreparedStatement ptsm = connection.prepareStatement(sql);
-        ptsm.setString(1, dto.getDescription());
-        ptsm.setString(2, String.valueOf(dto.getComplain_date()));
-        ptsm.setString(3, dto.getComplain_id());
-
-        return  ptsm.executeUpdate() > 0;
+    public boolean updateComplains(ComplainDto dto) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("UPDATE complains SET description = ?,complain_date = ? WHERE complain_id = ?",
+                dto.getDescription(),dto.getComplain_date(),dto.getComplain_id());
     }
 
     @Override
-    public boolean deleteComplains(String id) throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-
-        String sql = "DELETE FROM complains WHERE complain_id = ?";
-        PreparedStatement ptsm = connection.prepareStatement(sql);
-        ptsm.setString(1,id);
-        return ptsm.executeUpdate() > 0;
+    public boolean deleteComplains(String id) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("DELETE FROM complains WHERE complain_id = ?",id);
     }
 
     @Override
-    public List<ComplainDto> getAllComplains() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-
-        String sql = "SELECT * FROM complains";
-        PreparedStatement ptsm = connection.prepareStatement(sql);
-        ResultSet resultSet = ptsm.executeQuery();
+    public List<ComplainDto> getAllComplains() throws SQLException, ClassNotFoundException {
+        ResultSet resultSet = SQLUtil.execute("SELECT * FROM complains");
 
         ArrayList<ComplainDto> dtoList = new ArrayList<>();
         while (resultSet.next()){
@@ -85,8 +62,7 @@ public class ComplainDAOImpl implements ComplainDAO {
                             resultSet.getString(1),
                             resultSet.getString(2),
                             resultSet.getDate(3).toLocalDate()
-                    )
-            );
+                    ));
         }
         return dtoList;
     }

@@ -8,12 +8,12 @@ public interface ComplainDAO {
 
     String generateNextComplainID() throws SQLException, ClassNotFoundException;
 
-    boolean saveComplain(ComplainDto dto) throws SQLException;
+    boolean saveComplain(ComplainDto dto) throws SQLException, ClassNotFoundException;
 
-    boolean updateComplains(ComplainDto dto) throws SQLException;
+    boolean updateComplains(ComplainDto dto) throws SQLException, ClassNotFoundException;
 
-    boolean deleteComplains(String id) throws SQLException;
+    boolean deleteComplains(String id) throws SQLException, ClassNotFoundException;
 
-    List<ComplainDto> getAllComplains() throws SQLException;
+    List<ComplainDto> getAllComplains() throws SQLException, ClassNotFoundException;
 
 }
