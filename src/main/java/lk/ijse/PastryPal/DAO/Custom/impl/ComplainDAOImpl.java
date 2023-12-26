@@ -2,11 +2,7 @@ package lk.ijse.PastryPal.DAO.Custom.impl;
 
 import lk.ijse.PastryPal.DAO.Custom.ComplainDAO;
 import lk.ijse.PastryPal.DAO.SQLUtil;
-import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.dto.ComplainDto;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
