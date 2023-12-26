@@ -16,4 +16,5 @@ public interface ComplainDAO {
 
     List<ComplainDto> getAllComplains() throws SQLException, ClassNotFoundException;
 
+    String getAllCount() throws SQLException, ClassNotFoundException;
 }

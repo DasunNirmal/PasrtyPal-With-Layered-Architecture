@@ -62,4 +62,11 @@ public class ComplainDAOImpl implements ComplainDAO {
         }
         return dtoList;
     }
+
+    @Override
+    public String getAllCount() throws SQLException, ClassNotFoundException {
+        ResultSet resultSet = SQLUtil.execute("SELECT count(*) FROM complains");
+        resultSet.next();
+        return resultSet.getString(1);
+    }
 }

@@ -124,14 +124,12 @@ public class ComplainsFormController {
         });
     }
     private void totalComplains() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT count(*) FROM complains";
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        int count = resultSet.getInt(1);
-        lblCoplainCount.setText(String.valueOf(count));
+        try {
+            String getComplains = complainDAO.getAllCount();
+            lblCoplainCount.setText(String.valueOf(getComplains));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
     private void tableListener() {
         tblComplains.getSelectionModel().selectedItemProperty().addListener((observable, oldValued, newValue) -> {
