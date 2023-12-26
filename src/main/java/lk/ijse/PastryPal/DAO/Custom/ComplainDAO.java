@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ComplainDAO {
 
-    String generateNextComplainID() throws SQLException;
+    String generateNextComplainID() throws SQLException, ClassNotFoundException;
 
     boolean saveComplain(ComplainDto dto) throws SQLException;
 

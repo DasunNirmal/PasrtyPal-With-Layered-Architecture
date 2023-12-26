@@ -1,6 +1,7 @@
 package lk.ijse.PastryPal.DAO.Custom.impl;
 
 import lk.ijse.PastryPal.DAO.Custom.ComplainDAO;
+import lk.ijse.PastryPal.DAO.SQLUtil;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.dto.ComplainDto;
 
@@ -25,12 +26,8 @@ public class ComplainDAOImpl implements ComplainDAO {
         }
     }
     @Override
-    public String generateNextComplainID() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-
-        String sql = "SELECT complain_id FROM complains ORDER BY complain_id DESC LIMIT 1";
-        PreparedStatement ptsm = connection.prepareStatement(sql);
-        ResultSet resultSet = ptsm.executeQuery();
+    public String generateNextComplainID() throws SQLException, ClassNotFoundException {
+        ResultSet resultSet = SQLUtil.execute("SELECT complain_id FROM complains ORDER BY complain_id DESC LIMIT 1");
         if (resultSet.next()){
             return splitComplainID(resultSet.getString(1));
         }
