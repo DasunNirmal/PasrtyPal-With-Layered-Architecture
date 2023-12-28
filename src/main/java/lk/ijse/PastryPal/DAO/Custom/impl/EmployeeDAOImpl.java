@@ -2,7 +2,6 @@ package lk.ijse.PastryPal.DAO.Custom.impl;
 
 import lk.ijse.PastryPal.DAO.Custom.EmployeeDAO;
 import lk.ijse.PastryPal.DAO.SQLUtil;
-import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.dto.EmployeeDto;
 
 import java.sql.*;
