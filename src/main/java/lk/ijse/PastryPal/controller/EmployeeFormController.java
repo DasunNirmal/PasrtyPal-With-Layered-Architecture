@@ -14,11 +14,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
+import lk.ijse.PastryPal.DAO.Custom.EmployeeDAO;
+import lk.ijse.PastryPal.DAO.Custom.impl.EmployeeDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.EmployeeDto;
 import lk.ijse.PastryPal.dto.tm.EmployeeTm;
-import lk.ijse.PastryPal.model.EmployeeModel;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -78,7 +79,7 @@ public class EmployeeFormController {
     @FXML
     private Label lblEmployeeSaveOrNot;
 
-    private EmployeeModel employeeModel = new EmployeeModel();
+    EmployeeDAO employeeDAO = new EmployeeDAOImpl();
     private ObservableList<EmployeeTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -92,13 +93,15 @@ public class EmployeeFormController {
     private void generateNextEmployeeID() {
         try {
             String previousEmployeeID = lblEmployeeID.getId();
-            String employeeID = employeeModel.generateNextEmployeeID();
+            String employeeID = employeeDAO.generateNextEmployeeID();
             lblEmployeeID.setText(employeeID);
             if (btnClearPressed){
                 lblEmployeeID.setText(previousEmployeeID);
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
     private boolean btnClearPressed = false;
@@ -129,14 +132,12 @@ public class EmployeeFormController {
         });
     }
     private void totalEmployee() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT count(*) FROM employee";
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        int count = resultSet.getInt(1);
-        lblEmployeeCount.setText(String.valueOf(count));
+        try {
+            String getTotalEmployees = employeeDAO.getTotalEmployees();
+            lblEmployeeCount.setText(String.valueOf(getTotalEmployees));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
     private void tableListener() {
         tblEmployee.getSelectionModel().selectedItemProperty().addListener((observable, oldValued, newValue) -> {
@@ -147,7 +148,7 @@ public class EmployeeFormController {
         if (row != null) {
             lblEmployeeID.setText(row.getEmployee_id());
             txtFirstName.setText(row.getFirst_name());
-            txtLastName.setText(row.getFirst_name());
+            txtLastName.setText(row.getLast_name());
             txtAddress.setText(row.getAddress());
             txtPhoneNumber.setText(row.getPhone_number());
         }
@@ -163,7 +164,7 @@ public class EmployeeFormController {
     private void loadAllEmployees() {
         try {
             obList.clear();
-            List<EmployeeDto> dtoList = employeeModel.getAllEmployees();
+            List<EmployeeDto> dtoList = employeeDAO.getAllEmployees();
             for (EmployeeDto dto: dtoList ) {
                 obList.add(
                         new EmployeeTm(
@@ -178,6 +179,8 @@ public class EmployeeFormController {
             tblEmployee.setItems(obList);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -208,7 +211,7 @@ public class EmployeeFormController {
         }else {
             var dto = new EmployeeDto(id, first_name, last_name, address ,phone_number);
             try {
-                boolean isSaved = employeeModel.saveEmployee(dto);
+                boolean isSaved = employeeDAO.saveEmployee(dto);
                 if (isSaved){
                     obList.clear();
                     generateNextEmployeeID();
@@ -230,6 +233,8 @@ public class EmployeeFormController {
                 }
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -261,7 +266,7 @@ public class EmployeeFormController {
         } else {
             var dto = new EmployeeDto(id, first_name, last_name, address ,phone_number);
             try {
-                boolean isUpdated = employeeModel.updateEmployee(dto);
+                boolean isUpdated = employeeDAO.updateEmployee(dto);
                 if (isUpdated){
                     obList.clear();
                     totalEmployee();
@@ -283,6 +288,8 @@ public class EmployeeFormController {
                 }
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -313,7 +320,7 @@ public class EmployeeFormController {
             new Alert(Alert.AlertType.ERROR,"Can not Delete Employee.Phone Number is empty").showAndWait();
         } else {
             try {
-                boolean isDeleted = employeeModel.deleteEmployee(id);
+                boolean isDeleted = employeeDAO.deleteEmployee(id);
                 if (isDeleted){
                     obList.clear();
                     generateNextEmployeeID();
@@ -335,6 +342,8 @@ public class EmployeeFormController {
                 }
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }
