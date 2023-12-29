@@ -14,13 +14,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
+import lk.ijse.PastryPal.DAO.Custom.ItemDAO;
+import lk.ijse.PastryPal.DAO.Custom.impl.ItemDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.ItemDto;
 import lk.ijse.PastryPal.dto.SupplierDto;
-import lk.ijse.PastryPal.dto.tm.CustomerTm;
 import lk.ijse.PastryPal.dto.tm.ItemTm;
-import lk.ijse.PastryPal.model.ItemModel;
 import lk.ijse.PastryPal.model.SupplierModel;
 
 import java.sql.Connection;
@@ -90,8 +90,8 @@ public class ItemFormController {
     @FXML
     private TableColumn<?, ?> colPhoneNumber;
 
-    private ItemModel itemModel = new ItemModel();
-    private SupplierModel supplierModel = new SupplierModel();
+    ItemDAO itemDAO = new ItemDAOImpl();
+    SupplierModel supplierModel = new SupplierModel();
     private ObservableList<ItemTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -106,13 +106,15 @@ public class ItemFormController {
     private void generateNextItemID() {
         try {
             String previousItemID = lblItemsID.getText();
-            String itemID = itemModel.generateNextItemID();
+            String itemID = itemDAO.generateNextItemID();
             lblItemsID.setText(itemID);
             if (btnClearPressed){
                 lblItemsID.setText(previousItemID);
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -173,19 +175,17 @@ public class ItemFormController {
         }
     }
     private void totalItem() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT count(*) FROM items";
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        int count = resultSet.getInt(1);
-        lblItemsCount.setText(String.valueOf(count));
+        try {
+            String totalItems = itemDAO.getTotalItems();
+            lblItemsCount.setText(String.valueOf(totalItems));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
     private void loadAllItems() {
         try {
             obList.clear();
-            List<ItemDto> dtoList = itemModel.getAllItems();
+            List<ItemDto> dtoList = itemDAO.getAllItems();
             for (ItemDto dto : dtoList){
                 obList.add(
                         new ItemTm(
@@ -201,6 +201,8 @@ public class ItemFormController {
             tblItem.setItems(obList);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -227,7 +229,7 @@ public class ItemFormController {
 
                 var dto = new ItemDto(id,product_name,qty,s_id,name,tele);
                 try {
-                    boolean isSaved = itemModel.saveItems(dto);
+                    boolean isSaved = itemDAO.saveItems(dto);
                     if (isSaved){
                         obList.clear();
                         generateNextItemID();
@@ -249,6 +251,8 @@ public class ItemFormController {
                     }
                 } catch (SQLException e) {
                     new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
             }catch (NumberFormatException e) {
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
@@ -272,7 +276,7 @@ public class ItemFormController {
             new Alert(Alert.AlertType.ERROR,"Not a Valid Quantity").showAndWait();
         }else {
             try {
-                boolean isDeleted = itemModel.deleteItems(id);
+                boolean isDeleted = itemDAO.deleteItems(id);
                 if (isDeleted){
                     obList.clear();
                     generateNextItemID();
@@ -294,6 +298,8 @@ public class ItemFormController {
                 }
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -321,7 +327,7 @@ public class ItemFormController {
 
                 var dto = new ItemDto(id,product_name,qty,s_id,name,tele);
                 try {
-                    boolean isUpdated = itemModel.updateItems(dto);
+                    boolean isUpdated = itemDAO.updateItems(dto);
                     if (isUpdated){
                         obList.clear();
                         generateNextItemID();
@@ -343,6 +349,8 @@ public class ItemFormController {
                     }
                 } catch (SQLException e) {
                     new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
             }catch (NumberFormatException e) {
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
