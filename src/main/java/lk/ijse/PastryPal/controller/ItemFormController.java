@@ -15,18 +15,15 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
 import lk.ijse.PastryPal.DAO.Custom.ItemDAO;
+import lk.ijse.PastryPal.DAO.Custom.SupplierDAO;
 import lk.ijse.PastryPal.DAO.Custom.impl.ItemDAOImpl;
-import lk.ijse.PastryPal.DB.DbConnection;
+import lk.ijse.PastryPal.DAO.Custom.impl.SupplierDAOImpl;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.ItemDto;
 import lk.ijse.PastryPal.dto.SupplierDto;
 import lk.ijse.PastryPal.dto.tm.ItemTm;
-import lk.ijse.PastryPal.model.SupplierModel;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -91,7 +88,7 @@ public class ItemFormController {
     private TableColumn<?, ?> colPhoneNumber;
 
     ItemDAO itemDAO = new ItemDAOImpl();
-    SupplierModel supplierModel = new SupplierModel();
+    SupplierDAO supplierDAO = new SupplierDAOImpl();
     private ObservableList<ItemTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -366,9 +363,9 @@ public class ItemFormController {
         try {
             SupplierDto supplierDto;
             if (searchInput.matches("[S][0-9]{3,}")) {
-                supplierDto = supplierModel.searchSupplierById(searchInput);
+                supplierDto = supplierDAO.searchSupplierById(searchInput);
             } else {
-                supplierDto = supplierModel.searchSupplierByPhoneNumber(searchInput);
+                supplierDto = supplierDAO.searchSupplierByPhoneNumber(searchInput);
             }
             if (supplierDto != null){
                 lblSupplierID.setText(supplierDto.getSupplier_id());
@@ -383,6 +380,8 @@ public class ItemFormController {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
     @FXML

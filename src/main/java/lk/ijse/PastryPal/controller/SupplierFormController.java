@@ -14,16 +14,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
-import lk.ijse.PastryPal.DB.DbConnection;
+import lk.ijse.PastryPal.DAO.Custom.SupplierDAO;
+import lk.ijse.PastryPal.DAO.Custom.impl.SupplierDAOImpl;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.SupplierDto;
 import lk.ijse.PastryPal.dto.tm.SupplierTm;
-import lk.ijse.PastryPal.model.SupplierModel;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -72,7 +69,8 @@ public class SupplierFormController {
 
     @FXML
     private Label lblSupplierSaveOrNot;
-    private SupplierModel supplierModel = new SupplierModel();
+
+    SupplierDAO supplierDAO = new SupplierDAOImpl();
     private ObservableList<SupplierTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -87,7 +85,7 @@ public class SupplierFormController {
     private void generateNextSupplierID() {
         try {
             String previousSupplierID = lblSupplierID.getText();
-            String supplierID = supplierModel.generateNextSupplierID();
+            String supplierID = supplierDAO.generateNextSupplierID();
             lblSupplierID.setText(supplierID);
             clearFields();
             if (btnClearIsPressed){
@@ -95,6 +93,8 @@ public class SupplierFormController {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -148,19 +148,17 @@ public class SupplierFormController {
         }
     }
     private void totalSuppliers() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT count(*) FROM suppliers";
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        int count = resultSet.getInt(1);
-        lblSupplierCount.setText(String.valueOf(count));
+        try {
+            String totalSuppliers = supplierDAO.getTotalSuppliers();
+            lblSupplierCount.setText(String.valueOf(totalSuppliers));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
     private void loadAllSuppliers() {
         try {
             obList.clear();
-            List<SupplierDto> dtoList = supplierModel.getAllSuppliers();
+            List<SupplierDto> dtoList = supplierDAO.getAllSuppliers();
             for (SupplierDto dto : dtoList){
                 obList.add(
                         new SupplierTm(
@@ -174,6 +172,8 @@ public class SupplierFormController {
             tblSuppliers.setItems(obList);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -198,7 +198,7 @@ public class SupplierFormController {
         }else {
             var dto = new SupplierDto(id, name, date, phoneNumber);
             try {
-                boolean isSaved = supplierModel.saveSupplier(dto);
+                boolean isSaved = supplierDAO.saveSupplier(dto);
                 if (isSaved){
                     obList.clear();
                     generateNextSupplierID();
@@ -220,6 +220,8 @@ public class SupplierFormController {
                 }
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -244,7 +246,7 @@ public class SupplierFormController {
             new Alert(Alert.AlertType.ERROR,"Can not Delete Supplier.Phone Number is empty").showAndWait();
         }else {
             try {
-                boolean isDeleted = supplierModel.deleteSuppliers(id);
+                boolean isDeleted = supplierDAO.deleteSuppliers(id);
                 if (isDeleted){
                     obList.clear();
                     generateNextSupplierID();
@@ -266,6 +268,8 @@ public class SupplierFormController {
                 }
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -291,7 +295,7 @@ public class SupplierFormController {
         } else {
             var dto = new SupplierDto(id, name ,date ,phoneNumber);
             try {
-                boolean isUpdated = supplierModel.updateSuppliers(dto);
+                boolean isUpdated = supplierDAO.updateSuppliers(dto);
                 if (isUpdated){
                     obList.clear();
                     generateNextSupplierID();
@@ -313,6 +317,8 @@ public class SupplierFormController {
                 }
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }
