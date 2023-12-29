@@ -5,22 +5,25 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
+import lk.ijse.PastryPal.DAO.Custom.ComplainDAO;
+import lk.ijse.PastryPal.DAO.Custom.CustomerDAO;
+import lk.ijse.PastryPal.DAO.Custom.DashBoardDAO;
+import lk.ijse.PastryPal.DAO.Custom.JoinQueryDAO;
+import lk.ijse.PastryPal.DAO.Custom.impl.ComplainDAOImpl;
+import lk.ijse.PastryPal.DAO.Custom.impl.CustomerDAOImpl;
+import lk.ijse.PastryPal.DAO.Custom.impl.DashBoardDAOImpl;
+import lk.ijse.PastryPal.DAO.Custom.impl.JoinQueryDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.dto.DetailsDto;
 import lk.ijse.PastryPal.dto.tm.DetailsTm;
-import lk.ijse.PastryPal.model.DetailsModel;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -76,7 +79,11 @@ public class DashboardFormController {
 
     @FXML
     private TableView<DetailsTm> tblOrderDetails;
-    private DetailsModel detailsModel = new DetailsModel();
+
+    JoinQueryDAO joinQueryDAO = new JoinQueryDAOImpl();
+    ComplainDAO complainDAO = new ComplainDAOImpl();
+    CustomerDAO customerDAO = new CustomerDAOImpl();
+    DashBoardDAO dashBoardDAO = new DashBoardDAOImpl();
     private ObservableList<DetailsTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -91,25 +98,21 @@ public class DashboardFormController {
     }
 
     private void totalComplains() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT count(*) FROM complains";
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        int count = resultSet.getInt(1);
-        lblTotalComplains.setText(String.valueOf(count));
+        try {
+            String getComplains = complainDAO.getAllCount();
+            lblTotalComplains.setText(String.valueOf(getComplains));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void totalCustomers() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT count(*) FROM customer";
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        int count = resultSet.getInt(1);
-        lblTotalCustomers.setText(String.valueOf(count));
+        try {
+            String totalCustomers = customerDAO.getTotalCustomers();
+            lblTotalCustomers.setText(String.valueOf(totalCustomers));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void countOrdersByDate() throws SQLException {
@@ -134,14 +137,12 @@ public class DashboardFormController {
         lblTotalOrders.setText(String.valueOf(count));
     }
     private void TotalSales() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT SUM(unit_price) AS total_sum FROM order_details;";
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        int count = resultSet.getInt(1);
-        lblSales.setText(String.valueOf(count));
+        try {
+            String totalSales = dashBoardDAO.getTotalSales();
+            lblSales.setText(String.valueOf(totalSales));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void setCellValueFactory() {
@@ -159,7 +160,7 @@ public class DashboardFormController {
     private void loadAllDetails() {
         try {
             obList.clear();
-            List<DetailsDto> dtoList = detailsModel.getAllDetails();
+            List<DetailsDto> dtoList = joinQueryDAO.getAllDetails();
             for (DetailsDto dto : dtoList) {
                 obList.add(
                         new DetailsTm(
@@ -176,6 +177,8 @@ public class DashboardFormController {
             tblOrderDetails.setItems(obList);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
