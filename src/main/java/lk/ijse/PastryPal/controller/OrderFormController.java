@@ -11,8 +11,10 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
-import lk.ijse.PastryPal.DAO.Custom.CustomerDAO;
-import lk.ijse.PastryPal.DAO.Custom.impl.CustomerDAOImpl;
+import lk.ijse.PastryPal.DAO.custom.CustomerDAO;
+import lk.ijse.PastryPal.DAO.custom.ProductDAO;
+import lk.ijse.PastryPal.DAO.custom.impl.CustomerDAOImpl;
+import lk.ijse.PastryPal.DAO.custom.impl.ProductDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.CustomerDto;
@@ -20,7 +22,6 @@ import lk.ijse.PastryPal.dto.OrderDto;
 import lk.ijse.PastryPal.dto.ProductDto;
 import lk.ijse.PastryPal.dto.tm.OrderTm;
 import lk.ijse.PastryPal.model.OrderModel;
-import lk.ijse.PastryPal.model.ProductModel;
 import lombok.SneakyThrows;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -101,7 +102,7 @@ public class OrderFormController {
     @FXML
     private TextField txtSearchCustomer;
     CustomerDAO customerDAO = new CustomerDAOImpl();
-    private ProductModel productModel = new ProductModel();
+    private ProductDAO productDAO = new ProductDAOImpl();
     private OrderModel orderModel = new OrderModel();
     private ObservableList<OrderTm> obList = FXCollections.observableArrayList();
 
@@ -289,8 +290,6 @@ public class OrderFormController {
             if (isSuccess){
                 new Alert(Alert.AlertType.CONFIRMATION,"Order is Saved").show();
                 Report();
-//                generateNextOrderID();
-//                generateNextCustomerID();
                 obList.clear();
                 tblOrder.refresh();
                 calculateTotal();
@@ -338,8 +337,12 @@ public class OrderFormController {
     }
 
     private void autoCompleteProduct() throws SQLException {
-        String[] desc = productModel.getProductsByName(txtSearch.getText());
-        TextFields.bindAutoCompletion(txtSearch, desc);
+        try {
+            String[] desc = productDAO.getProductsByName(txtSearch.getText());
+            TextFields.bindAutoCompletion(txtSearch, desc);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML
@@ -349,9 +352,9 @@ public class OrderFormController {
         try {
             ProductDto productDto;
             if (searchInput.matches("[P][0-9]{3,}")) {
-                productDto = productModel.searchProductById(searchInput);
+                productDto = productDAO.searchProductById(searchInput);
             }else {
-                productDto = productModel.searchProductByName(searchInput);
+                productDto = productDAO.searchProductByName(searchInput);
             }
             if (productDto != null ){
                 lblProductID.setText(productDto.getProduct_id());
@@ -365,6 +368,8 @@ public class OrderFormController {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
     @FXML

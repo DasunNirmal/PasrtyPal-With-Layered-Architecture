@@ -14,8 +14,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import lk.ijse.PastryPal.DAO.Custom.RegistrationDAO;
-import lk.ijse.PastryPal.DAO.Custom.impl.RegistrationDAOImpl;
+import lk.ijse.PastryPal.DAO.custom.RegistrationDAO;
+import lk.ijse.PastryPal.DAO.custom.impl.RegistrationDAOImpl;
 import lk.ijse.PastryPal.dto.RegistrationDto;
 
 import java.io.IOException;

@@ -1,5 +1,7 @@
 package lk.ijse.PastryPal.model;
 
+import lk.ijse.PastryPal.DAO.custom.ProductDAO;
+import lk.ijse.PastryPal.DAO.custom.impl.ProductDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.dto.OrderDto;
 
@@ -10,7 +12,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class OrderModel {
-    private ProductModel productModel = new ProductModel();
+    ProductDAO productDAO = new ProductDAOImpl();
     private OrderDetailModel orderDetailModel = new OrderDetailModel();
     private String splitOrderID(String currentOrderID){
         if (currentOrderID != null){
@@ -48,7 +50,7 @@ public class OrderModel {
 
             boolean isOrderSaved = saveOrder(orderId,date,customerId);
             if (isOrderSaved){
-                boolean isUpdated = productModel.updateProduct(orderDto.getOrderTmList());
+                boolean isUpdated = productDAO.updateProduct(orderDto.getOrderTmList());
                 if (isUpdated){
                     boolean isOrderDetailSaved = orderDetailModel.saveOrderDetails(orderDto.getOrder_id(),orderDto.getOrderTmList());
                     if (isOrderDetailSaved){
@@ -57,6 +59,8 @@ public class OrderModel {
                 }
             }
             connection.rollback();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             connection.setAutoCommit(true);
         }

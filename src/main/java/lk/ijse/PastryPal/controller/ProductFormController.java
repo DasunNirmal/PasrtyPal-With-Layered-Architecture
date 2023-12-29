@@ -14,12 +14,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
+import lk.ijse.PastryPal.DAO.custom.ProductDAO;
+import lk.ijse.PastryPal.DAO.custom.impl.ProductDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.ProductDto;
-import lk.ijse.PastryPal.dto.tm.CustomerTm;
 import lk.ijse.PastryPal.dto.tm.ProductTm;
-import lk.ijse.PastryPal.model.ProductModel;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -73,7 +73,7 @@ public class ProductFormController {
 
     @FXML
     private Label lblProductsSaveOrNot;
-    private ProductModel productModel = new ProductModel();
+    ProductDAO productDAO = new ProductDAOImpl();
     private ObservableList<ProductTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -88,7 +88,7 @@ public class ProductFormController {
     private void generateNextProductID() {
         try {
             String previousItemID = lblProductID.getId();
-            String itemID = productModel.generateNextItemID();
+            String itemID = productDAO.generateNextItemID();
             lblProductID.setText(itemID);
             clearFields();
             if (btnClearPressed){
@@ -96,6 +96,8 @@ public class ProductFormController {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
     private boolean btnClearPressed = false;
@@ -148,7 +150,7 @@ public class ProductFormController {
     private void loadAllProducts() {
         try {
             obList.clear();
-            List<ProductDto> dtoList = productModel.getAllProducts();
+            List<ProductDto> dtoList = productDAO.getAllProducts();
             for (ProductDto dto : dtoList){
                 obList.add(
                         new ProductTm(
@@ -162,17 +164,17 @@ public class ProductFormController {
             tblItems.setItems(obList);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
     private void totalProducts() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT count(*) FROM products";
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        int count = resultSet.getInt(1);
-        lblProductCount.setText(String.valueOf(count));
+        try {
+            String totalProducts = productDAO.getTotalProducts();
+            lblProductCount.setText(String.valueOf(totalProducts));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML
@@ -201,7 +203,7 @@ public class ProductFormController {
 
                 var dto = new ProductDto(id, description, qty, price);
                 try {
-                    boolean isSaved = productModel.saveProduct(dto);
+                    boolean isSaved = productDAO.saveProduct(dto);
                     if (isSaved) {
                         obList.clear();
                         generateNextProductID();
@@ -223,6 +225,8 @@ public class ProductFormController {
                     }
                 } catch (SQLException e) {
                     new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
             } catch (NumberFormatException e) {
                 new Alert(Alert.AlertType.ERROR, "Invalid quantity or price format").showAndWait();
@@ -256,7 +260,7 @@ public class ProductFormController {
 
                 var dto = new ProductDto(id,desc,qty,price);
                 try {
-                    boolean isUpdated = productModel.updateProducts(dto);
+                    boolean isUpdated = productDAO.updateProducts(dto);
                     if (isUpdated){
                         obList.clear();
                         generateNextProductID();
@@ -276,6 +280,8 @@ public class ProductFormController {
                         lblProductsSaveOrNot.setText("");
                     });
                     pause.play();
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
             }catch (NumberFormatException e){
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
@@ -304,7 +310,7 @@ public class ProductFormController {
             new Alert(Alert.AlertType.ERROR, "Can not Delete Product.Price is Empty").showAndWait();
         }else {
             try {
-                boolean isDeleted = productModel.deleteProduct(id);
+                boolean isDeleted = productDAO.deleteProduct(id);
                 if (isDeleted){
                     obList.clear();
                     generateNextProductID();
@@ -326,6 +332,8 @@ public class ProductFormController {
                 }
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }
