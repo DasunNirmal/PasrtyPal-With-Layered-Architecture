@@ -9,9 +9,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import lk.ijse.PastryPal.DAO.Custom.RegistrationDAO;
+import lk.ijse.PastryPal.DAO.Custom.impl.RegistrationDAOImpl;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.RegistrationDto;
-import lk.ijse.PastryPal.model.RegistrationModel;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -26,7 +27,7 @@ public class RegisterFormController {
     private TextField txtUser;
     @FXML
     private AnchorPane RegisterPane;
-    private RegistrationModel registrationModel = new RegistrationModel();
+    RegistrationDAO registrationDAO = new RegistrationDAOImpl();
 
     private void clearFields() {
         txtUser.setText("");
@@ -65,18 +66,20 @@ public class RegisterFormController {
         }else {
             var dto = new RegistrationDto(userName, pw);
             try {
-                boolean checkDuplicates = registrationModel.check(userName, pw);
+                boolean checkDuplicates = registrationDAO.check(userName, pw);
                 if (checkDuplicates) {
                     new Alert(Alert.AlertType.ERROR, "Duplicate Entry").showAndWait();
                     return;
                 }
-                boolean isRegistered = registrationModel.registerUser(dto);
+                boolean isRegistered = registrationDAO.saveUser(dto);
                 if (isRegistered) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Your Account Has been Created").show();
                     clearFields();
                 }
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }
