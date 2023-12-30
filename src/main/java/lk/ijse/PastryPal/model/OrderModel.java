@@ -1,6 +1,8 @@
 package lk.ijse.PastryPal.model;
 
+import lk.ijse.PastryPal.DAO.custom.OrderDetailDAO;
 import lk.ijse.PastryPal.DAO.custom.ProductDAO;
+import lk.ijse.PastryPal.DAO.custom.impl.OrderDetailDAOImpl;
 import lk.ijse.PastryPal.DAO.custom.impl.ProductDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.dto.OrderDto;
@@ -13,7 +15,7 @@ import java.time.LocalDate;
 
 public class OrderModel {
     ProductDAO productDAO = new ProductDAOImpl();
-    private OrderDetailModel orderDetailModel = new OrderDetailModel();
+    OrderDetailDAO orderDetailDAO = new OrderDetailDAOImpl();
     private String splitOrderID(String currentOrderID){
         if (currentOrderID != null){
             String [] split = currentOrderID.split("[O]");
@@ -52,7 +54,7 @@ public class OrderModel {
             if (isOrderSaved){
                 boolean isUpdated = productDAO.updateProduct(orderDto.getOrderTmList());
                 if (isUpdated){
-                    boolean isOrderDetailSaved = orderDetailModel.saveOrderDetails(orderDto.getOrder_id(),orderDto.getOrderTmList());
+                    boolean isOrderDetailSaved = orderDetailDAO.save(orderDto.getOrder_id(),orderDto.getOrderTmList());
                     if (isOrderDetailSaved){
                         connection.commit();
                     }
