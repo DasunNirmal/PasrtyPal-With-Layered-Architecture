@@ -34,7 +34,7 @@ CREATE TABLE items(
 	item_id varchar(10)primary key,
 	product_name varchar(20)not null,
 	qty double,
-	suppier_id varchar(10),
+	supplier_id varchar(10),
 	supplier_name varchar(20),
 	supplier_phone_number varchar(10)
 );

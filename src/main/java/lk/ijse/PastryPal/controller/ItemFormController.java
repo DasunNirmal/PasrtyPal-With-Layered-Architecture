@@ -212,7 +212,7 @@ public class ItemFormController {
         String name = lblSupplierName.getText();
         String tele = lblSupplierPhoneNumber.getText();
 
-        boolean isValidName = RegExPatterns.getValidName().matcher(product_name).matches();
+        boolean isValidName = RegExPatterns.getValidDescription().matcher(product_name).matches();
         boolean isValidQty = RegExPatterns.getValidDouble().matcher(qtyText).matches();
 
         if (!isValidName){
