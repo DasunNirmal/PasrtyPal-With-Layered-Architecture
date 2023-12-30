@@ -1,21 +1,22 @@
-package lk.ijse.PastryPal.model;
+package lk.ijse.PastryPal.DAO.custom.impl;
 
+import lk.ijse.PastryPal.DAO.SQLUtil;
+import lk.ijse.PastryPal.DAO.custom.OrderDAO;
 import lk.ijse.PastryPal.DAO.custom.OrderDetailDAO;
 import lk.ijse.PastryPal.DAO.custom.ProductDAO;
-import lk.ijse.PastryPal.DAO.custom.impl.OrderDetailDAOImpl;
-import lk.ijse.PastryPal.DAO.custom.impl.ProductDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.dto.OrderDto;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-public class OrderModel {
+public class OrderDAOImpl implements OrderDAO {
+
     ProductDAO productDAO = new ProductDAOImpl();
     OrderDetailDAO orderDetailDAO = new OrderDetailDAOImpl();
+
     private String splitOrderID(String currentOrderID){
         if (currentOrderID != null){
             String [] split = currentOrderID.split("[O]");
@@ -28,12 +29,8 @@ public class OrderModel {
         }
     }
 
-    public String generateNextOrderID() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-
-        String sql = "SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1";
-        PreparedStatement ptsm = connection.prepareStatement(sql);
-        ResultSet resultSet = ptsm.executeQuery();
+    public String generateNextOrderID() throws SQLException, ClassNotFoundException {
+        ResultSet resultSet = SQLUtil.execute("SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1");
         if (resultSet.next()){
             return splitOrderID(resultSet.getString(1));
         }
@@ -69,14 +66,7 @@ public class OrderModel {
         return true;
     }
 
-    private boolean saveOrder(String orderId, LocalDate date, String customerId) throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-
-        String sql = "INSERT INTO orders VALUES (?,?,?)";
-        PreparedStatement ptsm = connection.prepareStatement(sql);
-        ptsm.setString(1,orderId);
-        ptsm.setString(2, String.valueOf(date));
-        ptsm.setString(3,customerId);
-        return ptsm.executeUpdate() > 0;
+    private boolean saveOrder(String orderId, LocalDate date, String customerId) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("INSERT INTO orders VALUES (?,?,?)",orderId,date,customerId);
     }
 }

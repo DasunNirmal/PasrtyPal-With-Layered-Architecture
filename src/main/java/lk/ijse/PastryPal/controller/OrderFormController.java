@@ -12,8 +12,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
 import lk.ijse.PastryPal.DAO.custom.CustomerDAO;
+import lk.ijse.PastryPal.DAO.custom.OrderDAO;
 import lk.ijse.PastryPal.DAO.custom.ProductDAO;
 import lk.ijse.PastryPal.DAO.custom.impl.CustomerDAOImpl;
+import lk.ijse.PastryPal.DAO.custom.impl.OrderDAOImpl;
 import lk.ijse.PastryPal.DAO.custom.impl.ProductDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
@@ -21,7 +23,6 @@ import lk.ijse.PastryPal.dto.CustomerDto;
 import lk.ijse.PastryPal.dto.OrderDto;
 import lk.ijse.PastryPal.dto.ProductDto;
 import lk.ijse.PastryPal.dto.tm.OrderTm;
-import lk.ijse.PastryPal.model.OrderModel;
 import lombok.SneakyThrows;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -102,8 +103,8 @@ public class OrderFormController {
     @FXML
     private TextField txtSearchCustomer;
     CustomerDAO customerDAO = new CustomerDAOImpl();
-    private ProductDAO productDAO = new ProductDAOImpl();
-    private OrderModel orderModel = new OrderModel();
+    ProductDAO productDAO = new ProductDAOImpl();
+    OrderDAO orderDAO = new OrderDAOImpl();
     private ObservableList<OrderTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -137,7 +138,7 @@ public class OrderFormController {
     private void generateNextOrderID() {
         try {
             String previousOrderID = lblOrderID.getText();
-            String orderID = orderModel.generateNextOrderID();
+            String orderID = orderDAO.generateNextOrderID();
             lblOrderID.setText(orderID);
             if (orderID != null) {
                 lblOrderID.setText(orderID);
@@ -148,6 +149,8 @@ public class OrderFormController {
             }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -286,7 +289,7 @@ public class OrderFormController {
             if (!checkCustomerID){
                 customerDAO.save(customerDto);
             }
-            boolean isSuccess = orderModel.placeOrder(orderDto);
+            boolean isSuccess = orderDAO.placeOrder(orderDto);
             if (isSuccess){
                 new Alert(Alert.AlertType.CONFIRMATION,"Order is Saved").show();
                 Report();
