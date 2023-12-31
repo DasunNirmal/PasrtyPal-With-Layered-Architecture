@@ -89,7 +89,7 @@ public class EmployeeFormController {
     private void generateNextEmployeeID() {
         try {
             String previousEmployeeID = lblEmployeeID.getId();
-            String employeeID = employeeDAO.generateNextEmployeeID();
+            String employeeID = employeeDAO.generateNextID();
             lblEmployeeID.setText(employeeID);
             if (btnClearPressed){
                 lblEmployeeID.setText(previousEmployeeID);
@@ -129,7 +129,7 @@ public class EmployeeFormController {
     }
     private void totalEmployee() throws SQLException {
         try {
-            String getTotalEmployees = employeeDAO.getTotalEmployees();
+            String getTotalEmployees = employeeDAO.getTotal();
             lblEmployeeCount.setText(String.valueOf(getTotalEmployees));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -160,7 +160,7 @@ public class EmployeeFormController {
     private void loadAllEmployees() {
         try {
             obList.clear();
-            List<EmployeeDto> dtoList = employeeDAO.getAllEmployees();
+            List<EmployeeDto> dtoList = employeeDAO.getAll();
             for (EmployeeDto dto: dtoList ) {
                 obList.add(
                         new EmployeeTm(
@@ -207,7 +207,7 @@ public class EmployeeFormController {
         }else {
             var dto = new EmployeeDto(id, first_name, last_name, address ,phone_number);
             try {
-                boolean isSaved = employeeDAO.saveEmployee(dto);
+                boolean isSaved = employeeDAO.save(dto);
                 if (isSaved){
                     obList.clear();
                     generateNextEmployeeID();
@@ -262,7 +262,7 @@ public class EmployeeFormController {
         } else {
             var dto = new EmployeeDto(id, first_name, last_name, address ,phone_number);
             try {
-                boolean isUpdated = employeeDAO.updateEmployee(dto);
+                boolean isUpdated = employeeDAO.update(dto);
                 if (isUpdated){
                     obList.clear();
                     totalEmployee();
@@ -316,7 +316,7 @@ public class EmployeeFormController {
             new Alert(Alert.AlertType.ERROR,"Can not Delete Employee.Phone Number is empty").showAndWait();
         } else {
             try {
-                boolean isDeleted = employeeDAO.deleteEmployee(id);
+                boolean isDeleted = employeeDAO.delete(id);
                 if (isDeleted){
                     obList.clear();
                     generateNextEmployeeID();

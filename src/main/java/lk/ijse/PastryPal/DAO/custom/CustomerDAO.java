@@ -1,24 +1,10 @@
 package lk.ijse.PastryPal.DAO.custom;
 
+import lk.ijse.PastryPal.DAO.CrudDAO;
 import lk.ijse.PastryPal.dto.CustomerDto;
 import java.sql.SQLException;
-import java.util.List;
 
-public interface CustomerDAO {
-
-    String generateNextCustomer() throws SQLException, ClassNotFoundException;
-
-    boolean save(CustomerDto dto) throws SQLException, ClassNotFoundException;
-
-    List<CustomerDto> getAllCustomer() throws SQLException, ClassNotFoundException;
-
-    boolean updateCustomer(CustomerDto dto) throws SQLException, ClassNotFoundException;
-
-    CustomerDto searchCustomer(String searchId) throws SQLException, ClassNotFoundException;
-
-    CustomerDto searchCustomerByPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException;
-
-    boolean deleteCustomers(String id) throws SQLException, ClassNotFoundException;
+public interface CustomerDAO extends CrudDAO<CustomerDto> {
 
     boolean isValidCustomer(CustomerDto customerDto) throws SQLException, ClassNotFoundException;
 
@@ -26,7 +12,6 @@ public interface CustomerDAO {
 
     String[] getCustomerByID(String id) throws SQLException, ClassNotFoundException;
 
-    String getCountOFLotalty() throws SQLException, ClassNotFoundException;
+    String getCountOFLoyalty() throws SQLException, ClassNotFoundException;
 
-    String getTotalCustomers() throws SQLException, ClassNotFoundException;
 }

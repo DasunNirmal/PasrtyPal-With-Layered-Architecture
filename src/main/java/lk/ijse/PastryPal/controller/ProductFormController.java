@@ -88,7 +88,7 @@ public class ProductFormController {
     private void generateNextProductID() {
         try {
             String previousItemID = lblProductID.getId();
-            String itemID = productDAO.generateNextItemID();
+            String itemID = productDAO.generateNextID();
             lblProductID.setText(itemID);
             clearFields();
             if (btnClearPressed){
@@ -150,7 +150,7 @@ public class ProductFormController {
     private void loadAllProducts() {
         try {
             obList.clear();
-            List<ProductDto> dtoList = productDAO.getAllProducts();
+            List<ProductDto> dtoList = productDAO.getAll();
             for (ProductDto dto : dtoList){
                 obList.add(
                         new ProductTm(
@@ -170,7 +170,7 @@ public class ProductFormController {
     }
     private void totalProducts() throws SQLException {
         try {
-            String totalProducts = productDAO.getTotalProducts();
+            String totalProducts = productDAO.getTotal();
             lblProductCount.setText(String.valueOf(totalProducts));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -203,7 +203,7 @@ public class ProductFormController {
 
                 var dto = new ProductDto(id, description, qty, price);
                 try {
-                    boolean isSaved = productDAO.saveProduct(dto);
+                    boolean isSaved = productDAO.save(dto);
                     if (isSaved) {
                         obList.clear();
                         generateNextProductID();
@@ -260,7 +260,7 @@ public class ProductFormController {
 
                 var dto = new ProductDto(id,desc,qty,price);
                 try {
-                    boolean isUpdated = productDAO.updateProducts(dto);
+                    boolean isUpdated = productDAO.update(dto);
                     if (isUpdated){
                         obList.clear();
                         generateNextProductID();
@@ -310,7 +310,7 @@ public class ProductFormController {
             new Alert(Alert.AlertType.ERROR, "Can not Delete Product.Price is Empty").showAndWait();
         }else {
             try {
-                boolean isDeleted = productDAO.deleteProduct(id);
+                boolean isDeleted = productDAO.delete(id);
                 if (isDeleted){
                     obList.clear();
                     generateNextProductID();

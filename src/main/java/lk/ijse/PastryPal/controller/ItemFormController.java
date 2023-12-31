@@ -103,7 +103,7 @@ public class ItemFormController {
     private void generateNextItemID() {
         try {
             String previousItemID = lblItemsID.getText();
-            String itemID = itemDAO.generateNextItemID();
+            String itemID = itemDAO.generateNextID();
             lblItemsID.setText(itemID);
             if (btnClearPressed){
                 lblItemsID.setText(previousItemID);
@@ -173,7 +173,7 @@ public class ItemFormController {
     }
     private void totalItem() throws SQLException {
         try {
-            String totalItems = itemDAO.getTotalItems();
+            String totalItems = itemDAO.getTotal();
             lblItemsCount.setText(String.valueOf(totalItems));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -182,7 +182,7 @@ public class ItemFormController {
     private void loadAllItems() {
         try {
             obList.clear();
-            List<ItemDto> dtoList = itemDAO.getAllItems();
+            List<ItemDto> dtoList = itemDAO.getAll();
             for (ItemDto dto : dtoList){
                 obList.add(
                         new ItemTm(
@@ -226,7 +226,7 @@ public class ItemFormController {
 
                 var dto = new ItemDto(id,product_name,qty,s_id,name,tele);
                 try {
-                    boolean isSaved = itemDAO.saveItems(dto);
+                    boolean isSaved = itemDAO.save(dto);
                     if (isSaved){
                         obList.clear();
                         generateNextItemID();
@@ -273,7 +273,7 @@ public class ItemFormController {
             new Alert(Alert.AlertType.ERROR,"Not a Valid Quantity").showAndWait();
         }else {
             try {
-                boolean isDeleted = itemDAO.deleteItems(id);
+                boolean isDeleted = itemDAO.delete(id);
                 if (isDeleted){
                     obList.clear();
                     generateNextItemID();
@@ -324,7 +324,7 @@ public class ItemFormController {
 
                 var dto = new ItemDto(id,product_name,qty,s_id,name,tele);
                 try {
-                    boolean isUpdated = itemDAO.updateItems(dto);
+                    boolean isUpdated = itemDAO.update(dto);
                     if (isUpdated){
                         obList.clear();
                         generateNextItemID();

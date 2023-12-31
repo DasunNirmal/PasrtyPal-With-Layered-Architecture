@@ -93,7 +93,7 @@ public class CustomerFormController {
 
     private void totalLoyaltyCustomers() throws SQLException {
         try {
-            String getLoyaltyCustomers = customerDAO.getCountOFLotalty();
+            String getLoyaltyCustomers = customerDAO.getCountOFLoyalty();
             lblCustomers.setText(String.valueOf(getLoyaltyCustomers));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -102,7 +102,7 @@ public class CustomerFormController {
 
     private void totalCustomers() throws SQLException {
         try {
-            String totalCustomers = customerDAO.getTotalCustomers();
+            String totalCustomers = customerDAO.getTotal();
             lblTotalCustomers.setText(String.valueOf(totalCustomers));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -111,7 +111,7 @@ public class CustomerFormController {
     private void  generateNextCustomerID(){
         try {
             String previousCustomerID = lblCustomerId.getText();
-            String customerID = customerDAO.generateNextCustomer();
+            String customerID = customerDAO.generateNextID();
             lblCustomerId.setText(customerID);
             clearFields();
             if (btnClearPressed){
@@ -173,7 +173,7 @@ public class CustomerFormController {
     private void loadAllCustomers() {
         try {
             obList.clear();
-            List<CustomerDto> dtoList = customerDAO.getAllCustomer();
+            List<CustomerDto> dtoList = customerDAO.getAll();
             for (CustomerDto dto : dtoList){
                 obList.add(
                         new CustomerTm(
@@ -268,7 +268,7 @@ public class CustomerFormController {
             try {
                 var dto = new CustomerDto(id,name,address,phoneNumber);
                 try {
-                    boolean isUpdated = customerDAO.updateCustomer(dto);
+                    boolean isUpdated = customerDAO.update(dto);
                     if (isUpdated){
                         obList.clear();
                         loadAllCustomers();
@@ -321,7 +321,7 @@ public class CustomerFormController {
             new Alert(Alert.AlertType.ERROR,"Can Not Delete.Phone Number is Empty").showAndWait();
         }else {
             try {
-                boolean isDeleted = customerDAO.deleteCustomers(id);
+                boolean isDeleted = customerDAO.delete(id);
                 if (isDeleted){
                     obList.clear();
                     loadAllCustomers();

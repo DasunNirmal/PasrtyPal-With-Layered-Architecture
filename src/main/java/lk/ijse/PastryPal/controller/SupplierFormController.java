@@ -85,7 +85,7 @@ public class SupplierFormController {
     private void generateNextSupplierID() {
         try {
             String previousSupplierID = lblSupplierID.getText();
-            String supplierID = supplierDAO.generateNextSupplierID();
+            String supplierID = supplierDAO.generateNextID();
             lblSupplierID.setText(supplierID);
             clearFields();
             if (btnClearIsPressed){
@@ -149,7 +149,7 @@ public class SupplierFormController {
     }
     private void totalSuppliers() throws SQLException {
         try {
-            String totalSuppliers = supplierDAO.getTotalSuppliers();
+            String totalSuppliers = supplierDAO.getTotal();
             lblSupplierCount.setText(String.valueOf(totalSuppliers));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -158,7 +158,7 @@ public class SupplierFormController {
     private void loadAllSuppliers() {
         try {
             obList.clear();
-            List<SupplierDto> dtoList = supplierDAO.getAllSuppliers();
+            List<SupplierDto> dtoList = supplierDAO.getAll();
             for (SupplierDto dto : dtoList){
                 obList.add(
                         new SupplierTm(
@@ -198,7 +198,7 @@ public class SupplierFormController {
         }else {
             var dto = new SupplierDto(id, name, date, phoneNumber);
             try {
-                boolean isSaved = supplierDAO.saveSupplier(dto);
+                boolean isSaved = supplierDAO.save(dto);
                 if (isSaved){
                     obList.clear();
                     generateNextSupplierID();
@@ -246,7 +246,7 @@ public class SupplierFormController {
             new Alert(Alert.AlertType.ERROR,"Can not Delete Supplier.Phone Number is empty").showAndWait();
         }else {
             try {
-                boolean isDeleted = supplierDAO.deleteSuppliers(id);
+                boolean isDeleted = supplierDAO.delete(id);
                 if (isDeleted){
                     obList.clear();
                     generateNextSupplierID();
@@ -295,7 +295,7 @@ public class SupplierFormController {
         } else {
             var dto = new SupplierDto(id, name ,date ,phoneNumber);
             try {
-                boolean isUpdated = supplierDAO.updateSuppliers(dto);
+                boolean isUpdated = supplierDAO.update(dto);
                 if (isUpdated){
                     obList.clear();
                     generateNextSupplierID();

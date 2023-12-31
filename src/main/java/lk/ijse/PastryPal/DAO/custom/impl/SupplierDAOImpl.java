@@ -23,7 +23,8 @@ public class SupplierDAOImpl implements SupplierDAO {
         }
     }
 
-    public String generateNextSupplierID() throws SQLException, ClassNotFoundException {
+    @Override
+    public String generateNextID() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT supplier_id FROM suppliers ORDER BY supplier_id DESC LIMIT 1");
         if (resultSet.next()){
             return splitSupplierID(resultSet.getString(1));
@@ -31,12 +32,14 @@ public class SupplierDAOImpl implements SupplierDAO {
         return splitSupplierID(null);
     }
 
-    public boolean saveSupplier(SupplierDto dto) throws SQLException, ClassNotFoundException {
+    @Override
+    public boolean save(SupplierDto dto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("INSERT INTO suppliers VALUES (?,?,?,?)",dto.getSupplier_id(),dto.getName(),
                 dto.getDate(),dto.getPhone_number());
     }
 
-    public List<SupplierDto> getAllSuppliers() throws SQLException, ClassNotFoundException {
+    @Override
+    public List<SupplierDto> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT  * FROM suppliers");
 
         ArrayList<SupplierDto> dtoList = new ArrayList<>();
@@ -54,7 +57,8 @@ public class SupplierDAOImpl implements SupplierDAO {
         return dtoList;
     }
 
-    public SupplierDto searchSupplierById(String searchId) throws SQLException, ClassNotFoundException {
+    @Override
+    public SupplierDto search(String searchId) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM suppliers WHERE supplier_id = ?",searchId);
 
         SupplierDto dto = null;
@@ -69,7 +73,8 @@ public class SupplierDAOImpl implements SupplierDAO {
         return dto;
     }
 
-    public SupplierDto searchSupplierByPhoneNumber(String searchPhoneNumber) throws SQLException, ClassNotFoundException {
+    @Override
+    public SupplierDto searchPhoneNumber(String searchPhoneNumber) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM suppliers WHERE phone_number = ?",searchPhoneNumber);
 
         SupplierDto dto = null;
@@ -84,17 +89,19 @@ public class SupplierDAOImpl implements SupplierDAO {
         return dto;
     }
 
-    public boolean deleteSuppliers(String id) throws SQLException, ClassNotFoundException {
+    @Override
+    public boolean delete(String id) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("DELETE FROM suppliers WHERE supplier_id = ?",id);
     }
 
-    public boolean updateSuppliers(SupplierDto dto) throws SQLException, ClassNotFoundException {
+    @Override
+    public boolean update(SupplierDto dto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("UPDATE suppliers SET name = ?,s_date = ?,phone_number = ? WHERE supplier_id = ?",
                 dto.getName(),dto.getDate(),dto.getPhone_number(),dto.getSupplier_id());
     }
 
     @Override
-    public String getTotalSuppliers() throws SQLException, ClassNotFoundException {
+    public String getTotal() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT count(*) FROM suppliers");
         resultSet.next();
         return resultSet.getString(1);

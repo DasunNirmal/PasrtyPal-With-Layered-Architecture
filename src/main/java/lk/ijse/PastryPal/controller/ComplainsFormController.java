@@ -78,7 +78,7 @@ public class ComplainsFormController {
     private void generateNextComplainID() {
         try {
             String previousComplainID = lblComplainID.getText();
-            String complainID = complainDAO.generateNextComplainID();
+            String complainID = complainDAO.generateNextID();
             lblComplainID.setText(complainID);
             clearFields();
             if (btnClearPressed){
@@ -121,7 +121,7 @@ public class ComplainsFormController {
     }
     private void totalComplains() throws SQLException {
         try {
-            String getComplains = complainDAO.getAllCount();
+            String getComplains = complainDAO.getTotal();
             lblCoplainCount.setText(String.valueOf(getComplains));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -150,7 +150,7 @@ public class ComplainsFormController {
     private void loadAllComplains() {
         try {
             obList.clear();
-            List<ComplainDto> dtoList = complainDAO.getAllComplains();
+            List<ComplainDto> dtoList = complainDAO.getAll();
             for (ComplainDto dto : dtoList){
                 obList.add(
                         new ComplainTm(
@@ -184,7 +184,7 @@ public class ComplainsFormController {
         } else {
             var dto = new ComplainDto(id , complain , date);
             try {
-                boolean isSaved = complainDAO.saveComplain(dto);
+                boolean isSaved = complainDAO.save(dto);
                 if (isSaved){
                     obList.clear();
                     totalComplains();
@@ -228,7 +228,7 @@ public class ComplainsFormController {
         }else {
             var dto = new ComplainDto(id , complain , date);
             try {
-                boolean isUpdated = complainDAO.updateComplains(dto);
+                boolean isUpdated = complainDAO.update(dto);
                 if (isUpdated){
                     obList.clear();
                     totalComplains();
@@ -271,7 +271,7 @@ public class ComplainsFormController {
             new Alert(Alert.AlertType.ERROR,"Can not Delete Complain.Date is empty").showAndWait();
         } else {
             try {
-                boolean isDeleted = complainDAO.deleteComplains(id);
+                boolean isDeleted = complainDAO.delete(id);
                 if (isDeleted){
                     obList.clear();
                     totalComplains();

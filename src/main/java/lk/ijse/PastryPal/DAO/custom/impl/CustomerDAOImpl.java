@@ -23,7 +23,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public String generateNextCustomer() throws SQLException, ClassNotFoundException {
+    public String generateNextID() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT customer_id FROM customer ORDER BY customer_id DESC LIMIT 1");
         if (resultSet.next()){
             return splitCustomerID(resultSet.getString(1));
@@ -38,7 +38,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public List<CustomerDto> getAllCustomer() throws SQLException, ClassNotFoundException {
+    public List<CustomerDto> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM customer");
 
         ArrayList<CustomerDto> dtoList = new ArrayList<>();
@@ -58,13 +58,13 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public boolean updateCustomer(CustomerDto dto) throws SQLException, ClassNotFoundException {
+    public boolean update(CustomerDto dto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("UPDATE customer SET name = ?,address = ?,phone_number = ? WHERE customer_id =?",
                 dto.getName(),dto.getAddress(),dto.getPhone_number(),dto.getCustomer_id());
     }
 
     @Override
-    public CustomerDto searchCustomer(String searchId) throws SQLException, ClassNotFoundException {
+    public CustomerDto search(String searchId) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM customer WHERE customer_id = ?",searchId);
 
         CustomerDto dto = null;
@@ -80,7 +80,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public CustomerDto searchCustomerByPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
+    public CustomerDto searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM customer WHERE phone_number = ?",phoneNumber);
 
         CustomerDto dto = null;
@@ -96,7 +96,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public boolean deleteCustomers(String id) throws SQLException, ClassNotFoundException {
+    public boolean delete(String id) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("DELETE FROM customer WHERE customer_id = ?",id);
     }
 
@@ -131,14 +131,14 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public String getCountOFLotalty() throws SQLException, ClassNotFoundException {
+    public String getCountOFLoyalty() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT COUNT(*) FROM customer WHERE name IS NOT NULL;");
         resultSet.next();
         return resultSet.getString(1);
     }
 
     @Override
-    public String getTotalCustomers() throws SQLException, ClassNotFoundException {
+    public String getTotal() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT count(*) FROM customer");
         resultSet.next();
         return resultSet.getString(1);

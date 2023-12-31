@@ -99,7 +99,7 @@ public class DashboardFormController {
 
     private void totalComplains() throws SQLException {
         try {
-            String getComplains = complainDAO.getAllCount();
+            String getComplains = complainDAO.getTotal();
             lblTotalComplains.setText(String.valueOf(getComplains));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -108,7 +108,7 @@ public class DashboardFormController {
 
     private void totalCustomers() throws SQLException {
         try {
-            String totalCustomers = customerDAO.getTotalCustomers();
+            String totalCustomers = customerDAO.getTotal();
             lblTotalCustomers.setText(String.valueOf(totalCustomers));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);

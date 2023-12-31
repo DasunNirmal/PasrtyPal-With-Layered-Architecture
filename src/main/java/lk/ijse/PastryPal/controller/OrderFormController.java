@@ -119,7 +119,7 @@ public class OrderFormController {
     private void generateNextCustomerID() {
         try {
             String previousOrderID = lblCustomerID.getText();
-            String orderID = customerDAO.generateNextCustomer();
+            String orderID = customerDAO.generateNextID();
             lblCustomerID.setText(orderID);
             if (orderID != null) {
                 lblCustomerID.setText(orderID);
@@ -138,7 +138,7 @@ public class OrderFormController {
     private void generateNextOrderID() {
         try {
             String previousOrderID = lblOrderID.getText();
-            String orderID = orderDAO.generateNextOrderID();
+            String orderID = orderDAO.generateNextID();
             lblOrderID.setText(orderID);
             if (orderID != null) {
                 lblOrderID.setText(orderID);
@@ -355,7 +355,7 @@ public class OrderFormController {
         try {
             ProductDto productDto;
             if (searchInput.matches("[P][0-9]{3,}")) {
-                productDto = productDAO.searchProductById(searchInput);
+                productDto = productDAO.search(searchInput);
             }else {
                 productDto = productDAO.searchProductByName(searchInput);
             }
@@ -382,9 +382,9 @@ public class OrderFormController {
         try {
             CustomerDto customerDto;
             if (searchCustomer.matches("\\d+")) {
-                customerDto = customerDAO.searchCustomerByPhoneNumber(searchCustomer);
+                customerDto = customerDAO.searchPhoneNumber(searchCustomer);
             } else {
-                customerDto = customerDAO.searchCustomer(searchCustomer);
+                customerDto = customerDAO.search(searchCustomer);
             }
             if (customerDto != null) {
                 lblCustomerID.setText(customerDto.getCustomer_id());

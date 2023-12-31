@@ -2,6 +2,7 @@ package lk.ijse.PastryPal.DAO.custom.impl;
 
 import lk.ijse.PastryPal.DAO.SQLUtil;
 import lk.ijse.PastryPal.DAO.custom.OrderDetailDAO;
+import lk.ijse.PastryPal.dto.OrderDto;
 import lk.ijse.PastryPal.dto.tm.OrderTm;
 
 import java.sql.SQLException;
@@ -21,5 +22,45 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
     private boolean saveOrderDetails(String orderId,OrderTm orderTm) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("INSERT INTO order_details VALUES (?,?,?,?)",orderId,orderTm.getProduct_id(),
                 orderTm.getQty(),orderTm.getUnit_price());
+    }
+
+    @Override
+    public String generateNextID() throws SQLException, ClassNotFoundException {
+        return null;
+    }
+
+    @Override
+    public boolean save(OrderDto dto) throws SQLException, ClassNotFoundException {
+        return false;
+    }
+
+    @Override
+    public List<OrderDto> getAll() throws SQLException, ClassNotFoundException {
+        return null;
+    }
+
+    @Override
+    public boolean update(OrderDto dto) throws SQLException, ClassNotFoundException {
+        return false;
+    }
+
+    @Override
+    public OrderDto search(String searchId) throws SQLException, ClassNotFoundException {
+        return null;
+    }
+
+    @Override
+    public OrderDto searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
+        return null;
+    }
+
+    @Override
+    public boolean delete(String id) throws SQLException, ClassNotFoundException {
+        return false;
+    }
+
+    @Override
+    public String getTotal() throws SQLException, ClassNotFoundException {
+        return null;
     }
 }

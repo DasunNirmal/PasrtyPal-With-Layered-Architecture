@@ -22,7 +22,7 @@ public class ComplainDAOImpl implements ComplainDAO {
         }
     }
     @Override
-    public String generateNextComplainID() throws SQLException, ClassNotFoundException {
+    public String generateNextID() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT complain_id FROM complains ORDER BY complain_id DESC LIMIT 1");
         if (resultSet.next()){
             return splitComplainID(resultSet.getString(1));
@@ -31,24 +31,34 @@ public class ComplainDAOImpl implements ComplainDAO {
     }
 
     @Override
-    public boolean saveComplain(ComplainDto dto) throws SQLException, ClassNotFoundException {
+    public boolean save(ComplainDto dto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("INSERT INTO complains VALUES (?,?,?)",dto.getComplain_id(),dto.getDescription(),
                 dto.getComplain_date());
     }
 
     @Override
-    public boolean updateComplains(ComplainDto dto) throws SQLException, ClassNotFoundException {
+    public boolean update(ComplainDto dto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("UPDATE complains SET description = ?,complain_date = ? WHERE complain_id = ?",
                 dto.getDescription(),dto.getComplain_date(),dto.getComplain_id());
     }
 
     @Override
-    public boolean deleteComplains(String id) throws SQLException, ClassNotFoundException {
+    public ComplainDto search(String searchId) throws SQLException, ClassNotFoundException {
+        return null;
+    }
+
+    @Override
+    public ComplainDto searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
+        return null;
+    }
+
+    @Override
+    public boolean delete(String id) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("DELETE FROM complains WHERE complain_id = ?",id);
     }
 
     @Override
-    public List<ComplainDto> getAllComplains() throws SQLException, ClassNotFoundException {
+    public List<ComplainDto> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM complains");
 
         ArrayList<ComplainDto> dtoList = new ArrayList<>();
@@ -64,7 +74,7 @@ public class ComplainDAOImpl implements ComplainDAO {
     }
 
     @Override
-    public String getAllCount() throws SQLException, ClassNotFoundException {
+    public String getTotal() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT count(*) FROM complains");
         resultSet.next();
         return resultSet.getString(1);
