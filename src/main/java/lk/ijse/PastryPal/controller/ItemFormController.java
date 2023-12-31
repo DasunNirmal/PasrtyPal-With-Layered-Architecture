@@ -363,9 +363,9 @@ public class ItemFormController {
         try {
             SupplierDto supplierDto;
             if (searchInput.matches("[S][0-9]{3,}")) {
-                supplierDto = supplierDAO.searchSupplierById(searchInput);
+                supplierDto = supplierDAO.search(searchInput);
             } else {
-                supplierDto = supplierDAO.searchSupplierByPhoneNumber(searchInput);
+                supplierDto = supplierDAO.searchPhoneNumber(searchInput);
             }
             if (supplierDto != null){
                 lblSupplierID.setText(supplierDto.getSupplier_id());
