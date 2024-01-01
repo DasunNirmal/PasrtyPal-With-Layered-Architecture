@@ -14,8 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
-import lk.ijse.PastryPal.DAO.custom.CustomerDAO;
-import lk.ijse.PastryPal.DAO.custom.impl.CustomerDAOImpl;
+import lk.ijse.PastryPal.BO.BOFactory;
+import lk.ijse.PastryPal.BO.Custom.CustomerBO;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.CustomerDto;
@@ -78,7 +78,7 @@ public class CustomerFormController {
     @FXML
     private Label lblCustomerSaveOrNot;
 
-    CustomerDAO customerDAO = new CustomerDAOImpl();
+    CustomerBO customerBO = (CustomerBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.CUSTOMER);
     private ObservableList<CustomerTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -93,7 +93,7 @@ public class CustomerFormController {
 
     private void totalLoyaltyCustomers() throws SQLException {
         try {
-            String getLoyaltyCustomers = customerDAO.getCountOFLoyalty();
+            String getLoyaltyCustomers = customerBO.getCountOFLoyaltyCustomers();
             lblCustomers.setText(String.valueOf(getLoyaltyCustomers));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -102,7 +102,7 @@ public class CustomerFormController {
 
     private void totalCustomers() throws SQLException {
         try {
-            String totalCustomers = customerDAO.getTotal();
+            String totalCustomers = customerBO.getTotalCustomer();
             lblTotalCustomers.setText(String.valueOf(totalCustomers));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -111,7 +111,7 @@ public class CustomerFormController {
     private void  generateNextCustomerID(){
         try {
             String previousCustomerID = lblCustomerId.getText();
-            String customerID = customerDAO.generateNextID();
+            String customerID = customerBO.generateNextCustomerID();
             lblCustomerId.setText(customerID);
             clearFields();
             if (btnClearPressed){
@@ -173,7 +173,7 @@ public class CustomerFormController {
     private void loadAllCustomers() {
         try {
             obList.clear();
-            List<CustomerDto> dtoList = customerDAO.getAll();
+            List<CustomerDto> dtoList = customerBO.getAllCustomers();
             for (CustomerDto dto : dtoList){
                 obList.add(
                         new CustomerTm(
@@ -215,7 +215,7 @@ public class CustomerFormController {
 
             var dto = new CustomerDto(id,name,address,phoneNumber);
             try {
-                boolean isSaved = customerDAO.save(dto);
+                boolean isSaved = customerBO.saveCustomer(dto);
                 if (isSaved){
                     generateNextCustomerID();
                     obList.clear();
@@ -268,7 +268,7 @@ public class CustomerFormController {
             try {
                 var dto = new CustomerDto(id,name,address,phoneNumber);
                 try {
-                    boolean isUpdated = customerDAO.update(dto);
+                    boolean isUpdated = customerBO.updateCustomer(dto);
                     if (isUpdated){
                         obList.clear();
                         loadAllCustomers();
@@ -321,7 +321,7 @@ public class CustomerFormController {
             new Alert(Alert.AlertType.ERROR,"Can Not Delete.Phone Number is Empty").showAndWait();
         }else {
             try {
-                boolean isDeleted = customerDAO.delete(id);
+                boolean isDeleted = customerBO.deleteCustomer(id);
                 if (isDeleted){
                     obList.clear();
                     loadAllCustomers();

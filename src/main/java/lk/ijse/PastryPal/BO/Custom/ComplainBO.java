@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface ComplainBO extends SuperBO {
 
-    String generateNextID() throws SQLException, ClassNotFoundException;
+    String generateNextComplainID() throws SQLException, ClassNotFoundException;
 
-    boolean save(ComplainDto dto) throws SQLException, ClassNotFoundException;
+    boolean saveComplain(ComplainDto dto) throws SQLException, ClassNotFoundException;
 
-    boolean update(ComplainDto dto) throws SQLException, ClassNotFoundException;
+    boolean updateComplain(ComplainDto dto) throws SQLException, ClassNotFoundException;
 
-    boolean delete(String id) throws SQLException, ClassNotFoundException;
+    boolean deleteComplain(String id) throws SQLException, ClassNotFoundException;
 
-    List<ComplainDto> getAll() throws SQLException, ClassNotFoundException;
+    List<ComplainDto> getAllComplains() throws SQLException, ClassNotFoundException;
 
-    String getTotal() throws SQLException, ClassNotFoundException;
+    String getTotalComplains() throws SQLException, ClassNotFoundException;
 }

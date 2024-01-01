@@ -11,10 +11,10 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
-import lk.ijse.PastryPal.DAO.custom.CustomerDAO;
+import lk.ijse.PastryPal.BO.BOFactory;
+import lk.ijse.PastryPal.BO.Custom.CustomerBO;
 import lk.ijse.PastryPal.DAO.custom.OrderDAO;
 import lk.ijse.PastryPal.DAO.custom.ProductDAO;
-import lk.ijse.PastryPal.DAO.custom.impl.CustomerDAOImpl;
 import lk.ijse.PastryPal.DAO.custom.impl.OrderDAOImpl;
 import lk.ijse.PastryPal.DAO.custom.impl.ProductDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
@@ -102,7 +102,7 @@ public class OrderFormController {
 
     @FXML
     private TextField txtSearchCustomer;
-    CustomerDAO customerDAO = new CustomerDAOImpl();
+    CustomerBO customerBO = (CustomerBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.CUSTOMER);
     ProductDAO productDAO = new ProductDAOImpl();
     OrderDAO orderDAO = new OrderDAOImpl();
     private ObservableList<OrderTm> obList = FXCollections.observableArrayList();
@@ -119,7 +119,7 @@ public class OrderFormController {
     private void generateNextCustomerID() {
         try {
             String previousOrderID = lblCustomerID.getText();
-            String orderID = customerDAO.generateNextID();
+            String orderID = customerBO.generateNextCustomerID();
             lblCustomerID.setText(orderID);
             if (orderID != null) {
                 lblCustomerID.setText(orderID);
@@ -285,9 +285,9 @@ public class OrderFormController {
         var customerDto = new CustomerDto(customerID,null,null,null);
         var orderDto = new OrderDto(orderID, date ,customerID ,orderTmList);
         try {
-            boolean checkCustomerID = customerDAO.isValidCustomer(customerDto);
+            boolean checkCustomerID = customerBO.isValidCustomer(customerDto);
             if (!checkCustomerID){
-                customerDAO.save(customerDto);
+                customerBO.saveCustomer(customerDto);
             }
             boolean isSuccess = orderDAO.placeOrder(orderDto);
             if (isSuccess){
@@ -330,8 +330,8 @@ public class OrderFormController {
 
     private void autoCompleteCustomer() throws SQLException {
         try {
-            String [] phoneNumber = customerDAO.getCustomerByPhoneNumber(txtSearchCustomer.getText());
-            String [] iD = customerDAO.getCustomerByID(txtSearchCustomer.getText());
+            String [] phoneNumber = customerBO.getCustomerByPhoneNumber(txtSearchCustomer.getText());
+            String [] iD = customerBO.getCustomerByID(txtSearchCustomer.getText());
             TextFields.bindAutoCompletion(txtSearchCustomer, phoneNumber);
             TextFields.bindAutoCompletion(txtSearchCustomer, iD);
         } catch (ClassNotFoundException e) {
@@ -382,9 +382,9 @@ public class OrderFormController {
         try {
             CustomerDto customerDto;
             if (searchCustomer.matches("\\d+")) {
-                customerDto = customerDAO.searchPhoneNumber(searchCustomer);
+                customerDto = customerBO.searchCustomerPhoneNumber(searchCustomer);
             } else {
-                customerDto = customerDAO.search(searchCustomer);
+                customerDto = customerBO.searchCustomer(searchCustomer);
             }
             if (customerDto != null) {
                 lblCustomerID.setText(customerDto.getCustomer_id());

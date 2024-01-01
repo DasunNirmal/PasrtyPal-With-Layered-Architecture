@@ -1,12 +1,13 @@
 package lk.ijse.PastryPal.DAO.custom;
 
 import lk.ijse.PastryPal.DAO.CrudDAO;
+import lk.ijse.PastryPal.Entity.Customer;
 import lk.ijse.PastryPal.dto.CustomerDto;
 import java.sql.SQLException;
 
-public interface CustomerDAO extends CrudDAO<CustomerDto> {
+public interface CustomerDAO extends CrudDAO<Customer> {
 
-    boolean isValidCustomer(CustomerDto customerDto) throws SQLException, ClassNotFoundException;
+    boolean isValidCustomer(Customer customer) throws SQLException, ClassNotFoundException;
 
     String[] getCustomerByPhoneNumber(String phone) throws SQLException, ClassNotFoundException;
 

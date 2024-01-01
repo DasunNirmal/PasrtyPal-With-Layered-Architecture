@@ -14,8 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
-import lk.ijse.PastryPal.DAO.custom.ComplainDAO;
-import lk.ijse.PastryPal.DAO.custom.impl.ComplainDAOImpl;
+import lk.ijse.PastryPal.BO.BOFactory;
+import lk.ijse.PastryPal.BO.Custom.ComplainBO;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.ComplainDto;
 import lk.ijse.PastryPal.dto.tm.ComplainTm;
@@ -63,7 +63,7 @@ public class ComplainsFormController {
     @FXML
     private Label lblComplainSaveOrNot;
 
-    ComplainDAO complainDAO = new ComplainDAOImpl();
+    ComplainBO complainBO = (ComplainBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.COMPLAIN);
     private ObservableList<ComplainTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -78,7 +78,7 @@ public class ComplainsFormController {
     private void generateNextComplainID() {
         try {
             String previousComplainID = lblComplainID.getText();
-            String complainID = complainDAO.generateNextID();
+            String complainID = complainBO.generateNextComplainID();
             lblComplainID.setText(complainID);
             clearFields();
             if (btnClearPressed){
@@ -121,7 +121,7 @@ public class ComplainsFormController {
     }
     private void totalComplains() throws SQLException {
         try {
-            String getComplains = complainDAO.getTotal();
+            String getComplains = complainBO.getTotalComplains();
             lblCoplainCount.setText(String.valueOf(getComplains));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -150,7 +150,7 @@ public class ComplainsFormController {
     private void loadAllComplains() {
         try {
             obList.clear();
-            List<ComplainDto> dtoList = complainDAO.getAll();
+            List<ComplainDto> dtoList = complainBO.getAllComplains();
             for (ComplainDto dto : dtoList){
                 obList.add(
                         new ComplainTm(
@@ -184,7 +184,7 @@ public class ComplainsFormController {
         } else {
             var dto = new ComplainDto(id , complain , date);
             try {
-                boolean isSaved = complainDAO.save(dto);
+                boolean isSaved = complainBO.saveComplain(dto);
                 if (isSaved){
                     obList.clear();
                     totalComplains();
@@ -228,7 +228,7 @@ public class ComplainsFormController {
         }else {
             var dto = new ComplainDto(id , complain , date);
             try {
-                boolean isUpdated = complainDAO.update(dto);
+                boolean isUpdated = complainBO.updateComplain(dto);
                 if (isUpdated){
                     obList.clear();
                     totalComplains();
@@ -271,7 +271,7 @@ public class ComplainsFormController {
             new Alert(Alert.AlertType.ERROR,"Can not Delete Complain.Date is empty").showAndWait();
         } else {
             try {
-                boolean isDeleted = complainDAO.delete(id);
+                boolean isDeleted = complainBO.deleteComplain(id);
                 if (isDeleted){
                     obList.clear();
                     totalComplains();

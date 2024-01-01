@@ -2,6 +2,7 @@ package lk.ijse.PastryPal.DAO.custom.impl;
 
 import lk.ijse.PastryPal.DAO.custom.CustomerDAO;
 import lk.ijse.PastryPal.DAO.SQLUtil;
+import lk.ijse.PastryPal.Entity.Customer;
 import lk.ijse.PastryPal.dto.CustomerDto;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,22 +33,22 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public boolean save(CustomerDto dto) throws SQLException, ClassNotFoundException {
+    public boolean save(Customer dto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("INSERT INTO customer VALUES (?,?,?,?)",dto.getCustomer_id(),dto.getName(),
                 dto.getAddress(),dto.getPhone_number());
     }
 
     @Override
-    public List<CustomerDto> getAll() throws SQLException, ClassNotFoundException {
+    public List<Customer> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM customer");
 
-        ArrayList<CustomerDto> dtoList = new ArrayList<>();
+        ArrayList<Customer> dtoList = new ArrayList<>();
         while (resultSet.next()){
             if (resultSet.getString(2) != null
                     || resultSet.getString(3) != null
                     || resultSet.getString(4) != null) {
                 dtoList.add(
-                        new CustomerDto(
+                        new Customer(
                                 resultSet.getString(1),
                                 resultSet.getString(2),
                                 resultSet.getString(3),
@@ -58,39 +59,39 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public boolean update(CustomerDto dto) throws SQLException, ClassNotFoundException {
+    public boolean update(Customer dto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("UPDATE customer SET name = ?,address = ?,phone_number = ? WHERE customer_id =?",
                 dto.getName(),dto.getAddress(),dto.getPhone_number(),dto.getCustomer_id());
     }
 
     @Override
-    public CustomerDto search(String searchId) throws SQLException, ClassNotFoundException {
+    public Customer search(String searchId) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM customer WHERE customer_id = ?",searchId);
 
-        CustomerDto dto = null;
+        Customer dto = null;
         if (resultSet.next()){
             String customer_id = resultSet.getString(1);
             String customer_name = resultSet.getString(2);
             String customer_address = resultSet.getString(3);
             String customer_phoneNumber = resultSet.getString(4);
 
-            dto = new CustomerDto(customer_id,customer_name,customer_address,customer_phoneNumber);
+            dto = new Customer(customer_id,customer_name,customer_address,customer_phoneNumber);
         }
         return dto;
     }
 
     @Override
-    public CustomerDto searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
+    public Customer searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM customer WHERE phone_number = ?",phoneNumber);
 
-        CustomerDto dto = null;
+        Customer dto = null;
         if (resultSet.next()) {
             String customer_id = resultSet.getString(1);
             String customer_name = resultSet.getString(2);
             String customer_address = resultSet.getString(3);
             String customer_phoneNumber = resultSet.getString(4);
 
-            dto = new CustomerDto(customer_id, customer_name, customer_address, customer_phoneNumber);
+            dto = new Customer(customer_id, customer_name, customer_address, customer_phoneNumber);
         }
         return dto;
     }
@@ -101,7 +102,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public boolean isValidCustomer(CustomerDto dto) throws SQLException, ClassNotFoundException {
+    public boolean isValidCustomer(Customer dto) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM customer WHERE customer_id = ?",dto.getCustomer_id());
         return resultSet.next();
     }

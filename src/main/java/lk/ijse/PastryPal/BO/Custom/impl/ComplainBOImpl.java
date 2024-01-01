@@ -7,6 +7,7 @@ import lk.ijse.PastryPal.Entity.Complain;
 import lk.ijse.PastryPal.dto.ComplainDto;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ComplainBOImpl implements ComplainBO {
@@ -14,32 +15,38 @@ public class ComplainBOImpl implements ComplainBO {
     ComplainDAO complainDAO = (ComplainDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.COMPLAIN);
 
     @Override
-    public String generateNextID() throws SQLException, ClassNotFoundException {
+    public String generateNextComplainID() throws SQLException, ClassNotFoundException {
         return complainDAO.generateNextID();
     }
 
     @Override
-    public boolean save(ComplainDto dto) throws SQLException, ClassNotFoundException {
+    public boolean saveComplain(ComplainDto dto) throws SQLException, ClassNotFoundException {
         return complainDAO.save(new Complain(dto.getComplain_id(),dto.getDescription(),dto.getComplain_date()));
     }
 
     @Override
-    public boolean update(ComplainDto dto) throws SQLException, ClassNotFoundException {
+    public boolean updateComplain(ComplainDto dto) throws SQLException, ClassNotFoundException {
         return complainDAO.update(new Complain(dto.getComplain_id(),dto.getDescription(),dto.getComplain_date()));
     }
 
     @Override
-    public boolean delete(String id) throws SQLException, ClassNotFoundException {
-        return false;
+    public boolean deleteComplain(String id) throws SQLException, ClassNotFoundException {
+        return complainDAO.delete(id);
     }
 
     @Override
-    public List<ComplainDto> getAll() throws SQLException, ClassNotFoundException {
-        return null;
+    public List<ComplainDto> getAllComplains() throws SQLException, ClassNotFoundException {
+        ArrayList<ComplainDto> complainDto = new ArrayList<>();
+        List<Complain> complains = complainDAO.getAll();
+
+        for (Complain complain : complains) {
+            complainDto.add(new ComplainDto(complain.getComplain_id(),complain.getDescription(),complain.getComplain_date()));
+        }
+        return complainDto;
     }
 
     @Override
-    public String getTotal() throws SQLException, ClassNotFoundException {
-        return null;
+    public String getTotalComplains() throws SQLException, ClassNotFoundException {
+        return complainDAO.getTotal();
     }
 }
