@@ -2,6 +2,7 @@ package lk.ijse.PastryPal.DAO.custom.impl;
 
 import lk.ijse.PastryPal.DAO.custom.EmployeeDAO;
 import lk.ijse.PastryPal.DAO.SQLUtil;
+import lk.ijse.PastryPal.Entity.Employee;
 import lk.ijse.PastryPal.dto.EmployeeDto;
 
 import java.sql.*;
@@ -32,24 +33,24 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     }
 
     @Override
-    public boolean save(EmployeeDto dto) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("INSERT INTO employee VALUES (?,?,?,?,?)",dto.getEmployee_id(),dto.getFirst_name(),
-                dto.getLast_name(),dto.getAddress(),dto.getPhone_number());
+    public boolean save(Employee entity) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("INSERT INTO employee VALUES (?,?,?,?,?)",entity.getEmployee_id(),entity.getFirst_name(),
+                entity.getLast_name(),entity.getAddress(),entity.getPhone_number());
     }
 
     @Override
-    public boolean update(EmployeeDto dto) throws SQLException, ClassNotFoundException {
+    public boolean update(Employee entity) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("UPDATE employee SET first_name = ?,last_name = ?,address = ?,phone_number = ? WHERE employee_id = ?",
-                dto.getFirst_name(),dto.getLast_name(),dto.getAddress(),dto.getPhone_number(),dto.getEmployee_id());
+                entity.getFirst_name(),entity.getLast_name(),entity.getAddress(),entity.getPhone_number(),entity.getEmployee_id());
     }
 
     @Override
-    public EmployeeDto search(String searchId) throws SQLException, ClassNotFoundException {
+    public Employee search(String searchId) throws SQLException, ClassNotFoundException {
         return null;
     }
 
     @Override
-    public EmployeeDto searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
+    public Employee searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
         return null;
     }
 
@@ -59,14 +60,14 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     }
 
     @Override
-    public List<EmployeeDto> getAll() throws SQLException, ClassNotFoundException {
+    public List<Employee> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM employee");
 
-        ArrayList<EmployeeDto> dtoList = new ArrayList<>();
+        ArrayList<Employee> entityList = new ArrayList<>();
 
         while (resultSet.next()){
-            dtoList.add(
-                    new EmployeeDto(
+            entityList.add(
+                    new Employee(
                             resultSet.getString(1),
                             resultSet.getString(2),
                             resultSet.getString(3),
@@ -75,7 +76,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
                     )
             );
         }
-        return dtoList;
+        return entityList;
     }
 
     @Override

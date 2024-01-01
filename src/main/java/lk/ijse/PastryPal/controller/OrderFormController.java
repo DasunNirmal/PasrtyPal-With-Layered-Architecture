@@ -13,10 +13,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
 import lk.ijse.PastryPal.BO.BOFactory;
 import lk.ijse.PastryPal.BO.Custom.CustomerBO;
+import lk.ijse.PastryPal.BO.Custom.OrderBO;
+import lk.ijse.PastryPal.BO.Custom.ProductsBO;
 import lk.ijse.PastryPal.DAO.custom.OrderDAO;
-import lk.ijse.PastryPal.DAO.custom.ProductDAO;
 import lk.ijse.PastryPal.DAO.custom.impl.OrderDAOImpl;
-import lk.ijse.PastryPal.DAO.custom.impl.ProductDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.CustomerDto;
@@ -103,8 +103,8 @@ public class OrderFormController {
     @FXML
     private TextField txtSearchCustomer;
     CustomerBO customerBO = (CustomerBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.CUSTOMER);
-    ProductDAO productDAO = new ProductDAOImpl();
-    OrderDAO orderDAO = new OrderDAOImpl();
+    ProductsBO productsBO = (ProductsBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.PRODUCTS);
+    OrderBO orderDAO = (OrderBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ORDER);
     private ObservableList<OrderTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -341,7 +341,7 @@ public class OrderFormController {
 
     private void autoCompleteProduct() throws SQLException {
         try {
-            String[] desc = productDAO.getProductsByName(txtSearch.getText());
+            String[] desc = productsBO.getProductsByName(txtSearch.getText());
             TextFields.bindAutoCompletion(txtSearch, desc);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -355,9 +355,9 @@ public class OrderFormController {
         try {
             ProductDto productDto;
             if (searchInput.matches("[P][0-9]{3,}")) {
-                productDto = productDAO.search(searchInput);
+                productDto = productsBO.searchProduct(searchInput);
             }else {
-                productDto = productDAO.searchProductByName(searchInput);
+                productDto = productsBO.searchProductByName(searchInput);
             }
             if (productDto != null ){
                 lblProductID.setText(productDto.getProduct_id());

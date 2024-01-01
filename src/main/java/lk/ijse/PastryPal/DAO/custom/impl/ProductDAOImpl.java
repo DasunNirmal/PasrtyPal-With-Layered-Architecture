@@ -2,6 +2,7 @@ package lk.ijse.PastryPal.DAO.custom.impl;
 
 import lk.ijse.PastryPal.DAO.SQLUtil;
 import lk.ijse.PastryPal.DAO.custom.ProductDAO;
+import lk.ijse.PastryPal.Entity.Product;
 import lk.ijse.PastryPal.dto.ProductDto;
 import lk.ijse.PastryPal.dto.tm.OrderTm;
 
@@ -23,6 +24,7 @@ public class ProductDAOImpl implements ProductDAO {
         }
     }
 
+    @Override
     public String generateNextID() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT product_id FROM products ORDER BY product_id DESC LIMIT 1");
         if (resultSet.next()){
@@ -31,63 +33,69 @@ public class ProductDAOImpl implements ProductDAO {
         return splitItemID(null);
     }
 
-    public boolean save(ProductDto dto) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("INSERT INTO products VALUES (?,?,?,?)",dto.getProduct_id(),dto.getDescription(),
-                dto.getQty(),dto.getPrice());
+    @Override
+    public boolean save(Product entity) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("INSERT INTO products VALUES (?,?,?,?)",entity.getProduct_id(),entity.getDescription(),
+                entity.getQty(),entity.getPrice());
     }
 
-    public boolean update(ProductDto dto) throws SQLException, ClassNotFoundException {
+    @Override
+    public boolean update(Product entity) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("UPDATE products SET description = ?, qty = ?, price = ? WHERE product_id = ?",
-                dto.getDescription(),dto.getQty(),dto.getPrice(),dto.getProduct_id());
+                entity.getDescription(),entity.getQty(),entity.getPrice(),entity.getProduct_id());
     }
 
-    public ProductDto search(String searchId) throws SQLException, ClassNotFoundException {
+    @Override
+    public Product search(String searchId) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM products WHERE product_id = ?",searchId);
 
-        ProductDto dto = null;
+        Product entity = null;
         if (resultSet.next()){
             String Product_id = resultSet.getString(1);
             String Product_description = resultSet.getString(2);
             int Product_qty = Integer.parseInt(resultSet.getString(3));
             double Product_price = Double.parseDouble(resultSet.getString(4));
 
-            dto = new ProductDto(Product_id, Product_description, Product_qty ,Product_price);
+            entity = new Product(Product_id, Product_description, Product_qty ,Product_price);
         }
-        return dto;
+        return entity;
     }
 
     @Override
-    public ProductDto searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
+    public Product searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
         return null;
     }
 
-    public ProductDto searchProductByName(String searchName) throws SQLException, ClassNotFoundException {
+    @Override
+    public Product searchProductByName(String searchName) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM products WHERE description = ?",searchName);
 
-        ProductDto dto = null;
+        Product entity = null;
         if (resultSet.next()){
             String Product_Id = resultSet.getString(1);
             String Product_description = resultSet.getString(2);
             int Product_qty = Integer.parseInt(resultSet.getString(3));
             double Product_price = Double.parseDouble(resultSet.getString(4));
 
-            dto = new ProductDto(Product_Id, Product_description, Product_qty, Product_price);
+            entity = new Product(Product_Id, Product_description, Product_qty, Product_price);
         }
-        return  dto;
+        return  entity;
     }
 
+    @Override
     public boolean delete(String itemId) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("DELETE FROM products WHERE product_id = ?",itemId);
     }
 
-    public List<ProductDto> getAll() throws SQLException, ClassNotFoundException {
+    @Override
+    public List<Product> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM products");
 
-        ArrayList<ProductDto> dtoList = new ArrayList<>();
+        ArrayList<Product> entityList = new ArrayList<>();
 
         while (resultSet.next()){
-            dtoList.add(
-                    new ProductDto(
+            entityList.add(
+                    new Product(
                             resultSet.getString(1),
                             resultSet.getString(2),
                             resultSet.getInt(3),
@@ -95,9 +103,10 @@ public class ProductDAOImpl implements ProductDAO {
                     )
             );
         }
-        return dtoList;
+        return entityList;
     }
 
+    @Override
     public boolean updateProduct(List<OrderTm> orderTmList) throws SQLException, ClassNotFoundException {
         for (OrderTm tm: orderTmList){
             if (!updateQty(tm.getProduct_id(),tm.getQty())){
@@ -111,6 +120,7 @@ public class ProductDAOImpl implements ProductDAO {
         return SQLUtil.execute("UPDATE products SET qty = qty - ? WHERE product_id = ?",qty,productId);
     }
 
+    @Override
     public String[] getProductsByName(String searchTerm) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM products WHERE description LIKE ?",
                 "%" + searchTerm + "%");

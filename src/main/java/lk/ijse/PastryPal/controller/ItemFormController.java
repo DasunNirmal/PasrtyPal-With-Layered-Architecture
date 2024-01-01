@@ -14,10 +14,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
-import lk.ijse.PastryPal.DAO.custom.ItemDAO;
-import lk.ijse.PastryPal.DAO.custom.SupplierDAO;
-import lk.ijse.PastryPal.DAO.custom.impl.ItemDAOImpl;
-import lk.ijse.PastryPal.DAO.custom.impl.SupplierDAOImpl;
+import lk.ijse.PastryPal.BO.BOFactory;
+import lk.ijse.PastryPal.BO.Custom.ItemBO;
+import lk.ijse.PastryPal.BO.Custom.SuppliersBO;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.ItemDto;
 import lk.ijse.PastryPal.dto.SupplierDto;
@@ -87,8 +86,8 @@ public class ItemFormController {
     @FXML
     private TableColumn<?, ?> colPhoneNumber;
 
-    ItemDAO itemDAO = new ItemDAOImpl();
-    SupplierDAO supplierDAO = new SupplierDAOImpl();
+    ItemBO itemBO = (ItemBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ITEMS);
+    SuppliersBO suppliersBO = (SuppliersBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.SUPPLIERS);
     private ObservableList<ItemTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -103,7 +102,7 @@ public class ItemFormController {
     private void generateNextItemID() {
         try {
             String previousItemID = lblItemsID.getText();
-            String itemID = itemDAO.generateNextID();
+            String itemID = itemBO.generateNextID();
             lblItemsID.setText(itemID);
             if (btnClearPressed){
                 lblItemsID.setText(previousItemID);
@@ -173,7 +172,7 @@ public class ItemFormController {
     }
     private void totalItem() throws SQLException {
         try {
-            String totalItems = itemDAO.getTotal();
+            String totalItems = itemBO.getTotal();
             lblItemsCount.setText(String.valueOf(totalItems));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -182,7 +181,7 @@ public class ItemFormController {
     private void loadAllItems() {
         try {
             obList.clear();
-            List<ItemDto> dtoList = itemDAO.getAll();
+            List<ItemDto> dtoList = itemBO.getAll();
             for (ItemDto dto : dtoList){
                 obList.add(
                         new ItemTm(
@@ -226,7 +225,7 @@ public class ItemFormController {
 
                 var dto = new ItemDto(id,product_name,qty,s_id,name,tele);
                 try {
-                    boolean isSaved = itemDAO.save(dto);
+                    boolean isSaved = itemBO.save(dto);
                     if (isSaved){
                         obList.clear();
                         generateNextItemID();
@@ -273,7 +272,7 @@ public class ItemFormController {
             new Alert(Alert.AlertType.ERROR,"Not a Valid Quantity").showAndWait();
         }else {
             try {
-                boolean isDeleted = itemDAO.delete(id);
+                boolean isDeleted = itemBO.delete(id);
                 if (isDeleted){
                     obList.clear();
                     generateNextItemID();
@@ -324,7 +323,7 @@ public class ItemFormController {
 
                 var dto = new ItemDto(id,product_name,qty,s_id,name,tele);
                 try {
-                    boolean isUpdated = itemDAO.update(dto);
+                    boolean isUpdated = itemBO.update(dto);
                     if (isUpdated){
                         obList.clear();
                         generateNextItemID();
@@ -363,9 +362,9 @@ public class ItemFormController {
         try {
             SupplierDto supplierDto;
             if (searchInput.matches("[S][0-9]{3,}")) {
-                supplierDto = supplierDAO.search(searchInput);
+                supplierDto = suppliersBO.searchSupplier(searchInput);
             } else {
-                supplierDto = supplierDAO.searchPhoneNumber(searchInput);
+                supplierDto = suppliersBO.searchSupplierByPhoneNumber(searchInput);
             }
             if (supplierDto != null){
                 lblSupplierID.setText(supplierDto.getSupplier_id());

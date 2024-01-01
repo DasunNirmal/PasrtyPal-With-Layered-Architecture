@@ -14,8 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
-import lk.ijse.PastryPal.DAO.custom.EmployeeDAO;
-import lk.ijse.PastryPal.DAO.custom.impl.EmployeeDAOImpl;
+import lk.ijse.PastryPal.BO.BOFactory;
+import lk.ijse.PastryPal.BO.Custom.EmployeeBO;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.EmployeeDto;
 import lk.ijse.PastryPal.dto.tm.EmployeeTm;
@@ -75,7 +75,7 @@ public class EmployeeFormController {
     @FXML
     private Label lblEmployeeSaveOrNot;
 
-    EmployeeDAO employeeDAO = new EmployeeDAOImpl();
+    EmployeeBO employeeBO = (EmployeeBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.EMPLOYEE);
     private ObservableList<EmployeeTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -89,7 +89,7 @@ public class EmployeeFormController {
     private void generateNextEmployeeID() {
         try {
             String previousEmployeeID = lblEmployeeID.getId();
-            String employeeID = employeeDAO.generateNextID();
+            String employeeID = employeeBO.generateNextEmployeeID();
             lblEmployeeID.setText(employeeID);
             if (btnClearPressed){
                 lblEmployeeID.setText(previousEmployeeID);
@@ -129,7 +129,7 @@ public class EmployeeFormController {
     }
     private void totalEmployee() throws SQLException {
         try {
-            String getTotalEmployees = employeeDAO.getTotal();
+            String getTotalEmployees = employeeBO.getTotalEmployees();
             lblEmployeeCount.setText(String.valueOf(getTotalEmployees));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -160,7 +160,7 @@ public class EmployeeFormController {
     private void loadAllEmployees() {
         try {
             obList.clear();
-            List<EmployeeDto> dtoList = employeeDAO.getAll();
+            List<EmployeeDto> dtoList = employeeBO.getAllEmployees();
             for (EmployeeDto dto: dtoList ) {
                 obList.add(
                         new EmployeeTm(
@@ -207,7 +207,7 @@ public class EmployeeFormController {
         }else {
             var dto = new EmployeeDto(id, first_name, last_name, address ,phone_number);
             try {
-                boolean isSaved = employeeDAO.save(dto);
+                boolean isSaved = employeeBO.saveEmployee(dto);
                 if (isSaved){
                     obList.clear();
                     generateNextEmployeeID();
@@ -262,7 +262,7 @@ public class EmployeeFormController {
         } else {
             var dto = new EmployeeDto(id, first_name, last_name, address ,phone_number);
             try {
-                boolean isUpdated = employeeDAO.update(dto);
+                boolean isUpdated = employeeBO.updateEmployee(dto);
                 if (isUpdated){
                     obList.clear();
                     totalEmployee();
@@ -316,7 +316,7 @@ public class EmployeeFormController {
             new Alert(Alert.AlertType.ERROR,"Can not Delete Employee.Phone Number is empty").showAndWait();
         } else {
             try {
-                boolean isDeleted = employeeDAO.delete(id);
+                boolean isDeleted = employeeBO.deleteEmployee(id);
                 if (isDeleted){
                     obList.clear();
                     generateNextEmployeeID();

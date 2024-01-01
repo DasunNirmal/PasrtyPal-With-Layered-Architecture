@@ -14,17 +14,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
-import lk.ijse.PastryPal.DAO.custom.ProductDAO;
-import lk.ijse.PastryPal.DAO.custom.impl.ProductDAOImpl;
-import lk.ijse.PastryPal.DB.DbConnection;
+import lk.ijse.PastryPal.BO.BOFactory;
+import lk.ijse.PastryPal.BO.Custom.ProductsBO;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.ProductDto;
 import lk.ijse.PastryPal.dto.tm.ProductTm;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -73,7 +69,7 @@ public class ProductFormController {
 
     @FXML
     private Label lblProductsSaveOrNot;
-    ProductDAO productDAO = new ProductDAOImpl();
+    ProductsBO productsBO = (ProductsBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.PRODUCTS);
     private ObservableList<ProductTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -88,7 +84,7 @@ public class ProductFormController {
     private void generateNextProductID() {
         try {
             String previousItemID = lblProductID.getId();
-            String itemID = productDAO.generateNextID();
+            String itemID = productsBO.generateNextProductID();
             lblProductID.setText(itemID);
             clearFields();
             if (btnClearPressed){
@@ -150,7 +146,7 @@ public class ProductFormController {
     private void loadAllProducts() {
         try {
             obList.clear();
-            List<ProductDto> dtoList = productDAO.getAll();
+            List<ProductDto> dtoList = productsBO.getAllProducts();
             for (ProductDto dto : dtoList){
                 obList.add(
                         new ProductTm(
@@ -170,7 +166,7 @@ public class ProductFormController {
     }
     private void totalProducts() throws SQLException {
         try {
-            String totalProducts = productDAO.getTotal();
+            String totalProducts = productsBO.getTotalProducts();
             lblProductCount.setText(String.valueOf(totalProducts));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -203,7 +199,7 @@ public class ProductFormController {
 
                 var dto = new ProductDto(id, description, qty, price);
                 try {
-                    boolean isSaved = productDAO.save(dto);
+                    boolean isSaved = productsBO.saveProduct(dto);
                     if (isSaved) {
                         obList.clear();
                         generateNextProductID();
@@ -260,7 +256,7 @@ public class ProductFormController {
 
                 var dto = new ProductDto(id,desc,qty,price);
                 try {
-                    boolean isUpdated = productDAO.update(dto);
+                    boolean isUpdated = productsBO.updateProduct(dto);
                     if (isUpdated){
                         obList.clear();
                         generateNextProductID();
@@ -310,7 +306,7 @@ public class ProductFormController {
             new Alert(Alert.AlertType.ERROR, "Can not Delete Product.Price is Empty").showAndWait();
         }else {
             try {
-                boolean isDeleted = productDAO.delete(id);
+                boolean isDeleted = productsBO.deleteProduct(id);
                 if (isDeleted){
                     obList.clear();
                     generateNextProductID();

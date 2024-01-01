@@ -14,8 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
-import lk.ijse.PastryPal.DAO.custom.SupplierDAO;
-import lk.ijse.PastryPal.DAO.custom.impl.SupplierDAOImpl;
+import lk.ijse.PastryPal.BO.BOFactory;
+import lk.ijse.PastryPal.BO.Custom.SuppliersBO;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.SupplierDto;
 import lk.ijse.PastryPal.dto.tm.SupplierTm;
@@ -70,7 +70,7 @@ public class SupplierFormController {
     @FXML
     private Label lblSupplierSaveOrNot;
 
-    SupplierDAO supplierDAO = new SupplierDAOImpl();
+    SuppliersBO suppliersBO = (SuppliersBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.SUPPLIERS);
     private ObservableList<SupplierTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -85,7 +85,7 @@ public class SupplierFormController {
     private void generateNextSupplierID() {
         try {
             String previousSupplierID = lblSupplierID.getText();
-            String supplierID = supplierDAO.generateNextID();
+            String supplierID = suppliersBO.generateNextSupplierID();
             lblSupplierID.setText(supplierID);
             clearFields();
             if (btnClearIsPressed){
@@ -149,7 +149,7 @@ public class SupplierFormController {
     }
     private void totalSuppliers() throws SQLException {
         try {
-            String totalSuppliers = supplierDAO.getTotal();
+            String totalSuppliers = suppliersBO.getTotalSuppliers();
             lblSupplierCount.setText(String.valueOf(totalSuppliers));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -158,7 +158,7 @@ public class SupplierFormController {
     private void loadAllSuppliers() {
         try {
             obList.clear();
-            List<SupplierDto> dtoList = supplierDAO.getAll();
+            List<SupplierDto> dtoList = suppliersBO.getAllSuppliers();
             for (SupplierDto dto : dtoList){
                 obList.add(
                         new SupplierTm(
@@ -198,7 +198,7 @@ public class SupplierFormController {
         }else {
             var dto = new SupplierDto(id, name, date, phoneNumber);
             try {
-                boolean isSaved = supplierDAO.save(dto);
+                boolean isSaved = suppliersBO.saveSupplier(dto);
                 if (isSaved){
                     obList.clear();
                     generateNextSupplierID();
@@ -246,7 +246,7 @@ public class SupplierFormController {
             new Alert(Alert.AlertType.ERROR,"Can not Delete Supplier.Phone Number is empty").showAndWait();
         }else {
             try {
-                boolean isDeleted = supplierDAO.delete(id);
+                boolean isDeleted = suppliersBO.deleteSupplier(id);
                 if (isDeleted){
                     obList.clear();
                     generateNextSupplierID();
@@ -295,7 +295,7 @@ public class SupplierFormController {
         } else {
             var dto = new SupplierDto(id, name ,date ,phoneNumber);
             try {
-                boolean isUpdated = supplierDAO.update(dto);
+                boolean isUpdated = suppliersBO.updateSupplier(dto);
                 if (isUpdated){
                     obList.clear();
                     generateNextSupplierID();

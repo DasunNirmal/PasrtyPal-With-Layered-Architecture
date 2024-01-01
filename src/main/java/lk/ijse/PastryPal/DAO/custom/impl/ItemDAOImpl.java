@@ -2,7 +2,7 @@ package lk.ijse.PastryPal.DAO.custom.impl;
 
 import lk.ijse.PastryPal.DAO.custom.ItemDAO;
 import lk.ijse.PastryPal.DAO.SQLUtil;
-import lk.ijse.PastryPal.dto.ItemDto;
+import lk.ijse.PastryPal.Entity.Item;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,39 +30,39 @@ public class ItemDAOImpl implements ItemDAO {
         return splitItemID(null);
     }
 
-    public boolean save(ItemDto dto) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("INSERT INTO items VALUES (?,?,?,?,?,?)",dto.getItem_id(),dto.getProduct_name(),
-                dto.getQty(),dto.getSupplier_id(),dto.getSupplier_name(),dto.getSupplier_phone_number());
+    public boolean save(Item entity) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("INSERT INTO items VALUES (?,?,?,?,?,?)",entity.getItem_id(),entity.getProduct_name(),
+                entity.getQty(),entity.getSupplier_id(),entity.getSupplier_name(),entity.getSupplier_phone_number());
     }
 
     public boolean delete(String id) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("DELETE FROM items WHERE item_id = ?",id);
     }
 
-    public boolean update(ItemDto dto) throws SQLException, ClassNotFoundException {
+    public boolean update(Item entity) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("UPDATE items SET product_name = ?, qty = ?, supplier_id = ?, supplier_name = ?, supplier_phone_number = ? WHERE item_id = ?",
-                dto.getProduct_name(),dto.getQty(),dto.getSupplier_id(),dto.getProduct_name(),dto.getSupplier_phone_number(),
-                dto.getItem_id());
+                entity.getProduct_name(),entity.getQty(),entity.getSupplier_id(),entity.getProduct_name(),entity.getSupplier_phone_number(),
+                entity.getItem_id());
     }
 
     @Override
-    public ItemDto search(String searchId) throws SQLException, ClassNotFoundException {
+    public Item search(String searchId) throws SQLException, ClassNotFoundException {
         return null;
     }
 
     @Override
-    public ItemDto searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
+    public Item searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
         return null;
     }
 
-    public List<ItemDto> getAll() throws SQLException, ClassNotFoundException {
+    public List<Item> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM items");
 
-        ArrayList<ItemDto> dtoList = new ArrayList<>();
+        ArrayList<Item> entityList = new ArrayList<>();
 
         while (resultSet.next()){
-            dtoList.add(
-                    new ItemDto(
+            entityList.add(
+                    new Item(
                             resultSet.getString(1),
                             resultSet.getString(2),
                             resultSet.getDouble(3),
@@ -72,7 +72,7 @@ public class ItemDAOImpl implements ItemDAO {
                     )
             );
         }
-        return dtoList;
+        return entityList;
     }
 
     @Override

@@ -5,6 +5,7 @@ import lk.ijse.PastryPal.DAO.custom.OrderDAO;
 import lk.ijse.PastryPal.DAO.custom.OrderDetailDAO;
 import lk.ijse.PastryPal.DAO.custom.ProductDAO;
 import lk.ijse.PastryPal.DB.DbConnection;
+import lk.ijse.PastryPal.Entity.Order;
 import lk.ijse.PastryPal.dto.OrderDto;
 
 import java.sql.Connection;
@@ -14,9 +15,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class OrderDAOImpl implements OrderDAO {
-
-    ProductDAO productDAO = new ProductDAOImpl();
-    OrderDetailDAO orderDetailDAO = new OrderDetailDAOImpl();
 
     private String splitOrderID(String currentOrderID){
         if (currentOrderID != null){
@@ -39,27 +37,27 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     @Override
-    public boolean save(OrderDto dto) throws SQLException, ClassNotFoundException {
-        return false;
+    public boolean save(Order dto) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("INSERT INTO orders VALUES (?,?,?)",dto.getOrder_id(),dto.getDate(),dto.getCustomer_id());
     }
 
     @Override
-    public List<OrderDto> getAll() throws SQLException, ClassNotFoundException {
+    public List<Order> getAll() throws SQLException, ClassNotFoundException {
         return null;
     }
 
     @Override
-    public boolean update(OrderDto dto) throws SQLException, ClassNotFoundException {
+    public boolean update(Order dto) throws SQLException, ClassNotFoundException {
         return false;
     }
 
     @Override
-    public OrderDto search(String searchId) throws SQLException, ClassNotFoundException {
+    public Order search(String searchId) throws SQLException, ClassNotFoundException {
         return null;
     }
 
     @Override
-    public OrderDto searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
+    public Order searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
         return null;
     }
 
@@ -71,38 +69,5 @@ public class OrderDAOImpl implements OrderDAO {
     @Override
     public String getTotal() throws SQLException, ClassNotFoundException {
         return null;
-    }
-
-    public boolean placeOrder(OrderDto orderDto) throws SQLException {
-        String orderId = orderDto.getOrder_id();
-        LocalDate date = orderDto.getDate();
-        String customerId = orderDto.getCustomer_id();
-
-        Connection connection = null;
-        try {
-            connection = DbConnection.getInstance().getConnection();
-            connection.setAutoCommit(false);
-
-            boolean isOrderSaved = save(orderId,date,customerId);
-            if (isOrderSaved){
-                boolean isUpdated = productDAO.updateProduct(orderDto.getOrderTmList());
-                if (isUpdated){
-                    boolean isOrderDetailSaved = orderDetailDAO.save(orderDto.getOrder_id(),orderDto.getOrderTmList());
-                    if (isOrderDetailSaved){
-                        connection.commit();
-                    }
-                }
-            }
-            connection.rollback();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } finally {
-            connection.setAutoCommit(true);
-        }
-        return true;
-    }
-
-    private boolean save(String orderId, LocalDate date, String customerId) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("INSERT INTO orders VALUES (?,?,?)",orderId,date,customerId);
     }
 }

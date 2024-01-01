@@ -2,7 +2,7 @@ package lk.ijse.PastryPal.DAO.custom.impl;
 
 import lk.ijse.PastryPal.DAO.custom.SupplierDAO;
 import lk.ijse.PastryPal.DAO.SQLUtil;
-import lk.ijse.PastryPal.dto.SupplierDto;
+import lk.ijse.PastryPal.Entity.Supplier;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -33,20 +33,20 @@ public class SupplierDAOImpl implements SupplierDAO {
     }
 
     @Override
-    public boolean save(SupplierDto dto) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("INSERT INTO suppliers VALUES (?,?,?,?)",dto.getSupplier_id(),dto.getName(),
-                dto.getDate(),dto.getPhone_number());
+    public boolean save(Supplier entity) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("INSERT INTO suppliers VALUES (?,?,?,?)",entity.getSupplier_id(),entity.getName(),
+                entity.getDate(),entity.getPhone_number());
     }
 
     @Override
-    public List<SupplierDto> getAll() throws SQLException, ClassNotFoundException {
+    public List<Supplier> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT  * FROM suppliers");
 
-        ArrayList<SupplierDto> dtoList = new ArrayList<>();
+        ArrayList<Supplier> entityList = new ArrayList<>();
 
         while (resultSet.next()){
-            dtoList.add(
-                    new SupplierDto(
+            entityList.add(
+                    new Supplier(
                             resultSet.getString(1),
                             resultSet.getString(2),
                             resultSet.getDate(3).toLocalDate(),
@@ -54,39 +54,39 @@ public class SupplierDAOImpl implements SupplierDAO {
                     )
             );
         }
-        return dtoList;
+        return entityList;
     }
 
     @Override
-    public SupplierDto search(String searchId) throws SQLException, ClassNotFoundException {
+    public Supplier search(String searchId) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM suppliers WHERE supplier_id = ?",searchId);
 
-        SupplierDto dto = null;
+        Supplier entity = null;
         if (resultSet.next()) {
             String supplier_id = resultSet.getString(1);
             String supplier_name = resultSet.getString(2);
             LocalDate supplier_date = LocalDate.parse(resultSet.getString(3));
             String supplier_phone_number = resultSet.getString(4);
 
-            dto = new SupplierDto(supplier_id ,supplier_name, supplier_date ,supplier_phone_number);
+            entity = new Supplier(supplier_id ,supplier_name, supplier_date ,supplier_phone_number);
         }
-        return dto;
+        return entity;
     }
 
     @Override
-    public SupplierDto searchPhoneNumber(String searchPhoneNumber) throws SQLException, ClassNotFoundException {
+    public Supplier searchPhoneNumber(String searchPhoneNumber) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM suppliers WHERE phone_number = ?",searchPhoneNumber);
 
-        SupplierDto dto = null;
+        Supplier entity = null;
         if (resultSet.next()){
             String supplier_id = resultSet.getString(1);
             String supplier_name = resultSet.getString(2);
             LocalDate supplier_date = LocalDate.parse(resultSet.getString(3));
             String supplier_phone_number = resultSet.getString(4);
 
-            dto = new SupplierDto(supplier_id, supplier_name, supplier_date, supplier_phone_number);
+            entity = new Supplier(supplier_id, supplier_name, supplier_date, supplier_phone_number);
         }
-        return dto;
+        return entity;
     }
 
     @Override
@@ -95,9 +95,9 @@ public class SupplierDAOImpl implements SupplierDAO {
     }
 
     @Override
-    public boolean update(SupplierDto dto) throws SQLException, ClassNotFoundException {
+    public boolean update(Supplier entity) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("UPDATE suppliers SET name = ?,s_date = ?,phone_number = ? WHERE supplier_id = ?",
-                dto.getName(),dto.getDate(),dto.getPhone_number(),dto.getSupplier_id());
+                entity.getName(),entity.getDate(),entity.getPhone_number(),entity.getSupplier_id());
     }
 
     @Override
