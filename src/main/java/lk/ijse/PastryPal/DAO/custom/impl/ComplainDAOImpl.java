@@ -2,6 +2,7 @@ package lk.ijse.PastryPal.DAO.custom.impl;
 
 import lk.ijse.PastryPal.DAO.custom.ComplainDAO;
 import lk.ijse.PastryPal.DAO.SQLUtil;
+import lk.ijse.PastryPal.Entity.Complain;
 import lk.ijse.PastryPal.dto.ComplainDto;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,24 +32,24 @@ public class ComplainDAOImpl implements ComplainDAO {
     }
 
     @Override
-    public boolean save(ComplainDto dto) throws SQLException, ClassNotFoundException {
+    public boolean save(Complain dto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("INSERT INTO complains VALUES (?,?,?)",dto.getComplain_id(),dto.getDescription(),
                 dto.getComplain_date());
     }
 
     @Override
-    public boolean update(ComplainDto dto) throws SQLException, ClassNotFoundException {
+    public boolean update(Complain dto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("UPDATE complains SET description = ?,complain_date = ? WHERE complain_id = ?",
                 dto.getDescription(),dto.getComplain_date(),dto.getComplain_id());
     }
 
     @Override
-    public ComplainDto search(String searchId) throws SQLException, ClassNotFoundException {
+    public Complain search(String searchId) throws SQLException, ClassNotFoundException {
         return null;
     }
 
     @Override
-    public ComplainDto searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
+    public Complain searchPhoneNumber(String phoneNumber) throws SQLException, ClassNotFoundException {
         return null;
     }
 
@@ -58,13 +59,13 @@ public class ComplainDAOImpl implements ComplainDAO {
     }
 
     @Override
-    public List<ComplainDto> getAll() throws SQLException, ClassNotFoundException {
+    public List<Complain> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM complains");
 
-        ArrayList<ComplainDto> dtoList = new ArrayList<>();
+        ArrayList<Complain> dtoList = new ArrayList<>();
         while (resultSet.next()){
             dtoList.add(
-                    new ComplainDto(
+                    new Complain(
                             resultSet.getString(1),
                             resultSet.getString(2),
                             resultSet.getDate(3).toLocalDate()
