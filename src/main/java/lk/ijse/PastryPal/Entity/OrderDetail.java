@@ -1,19 +1,15 @@
 package lk.ijse.PastryPal.Entity;
 
-import lk.ijse.PastryPal.dto.tm.OrderTm;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class Product {
+public class OrderDetail {
+    private String order_id;
     private String product_id;
-    private String description;
     private int qty;
-    private double price;
-
+    private double unit_price;
 }

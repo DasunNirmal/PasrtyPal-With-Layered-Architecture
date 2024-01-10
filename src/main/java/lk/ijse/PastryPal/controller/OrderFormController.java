@@ -20,6 +20,7 @@ import lk.ijse.PastryPal.DAO.custom.impl.OrderDAOImpl;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.RegExPatterns.RegExPatterns;
 import lk.ijse.PastryPal.dto.CustomerDto;
+import lk.ijse.PastryPal.dto.OrderDetailDto;
 import lk.ijse.PastryPal.dto.OrderDto;
 import lk.ijse.PastryPal.dto.ProductDto;
 import lk.ijse.PastryPal.dto.tm.OrderTm;
@@ -289,7 +290,7 @@ public class OrderFormController {
             if (!checkCustomerID){
                 customerBO.saveCustomer(customerDto);
             }
-            boolean isSuccess = orderDAO.placeOrder(orderDto);
+            boolean isSuccess = orderDAO.placeOrder(orderDto,orderTmList);
             if (isSuccess){
                 new Alert(Alert.AlertType.CONFIRMATION,"Order is Saved").show();
                 Report();

@@ -7,11 +7,17 @@ import lk.ijse.PastryPal.DAO.custom.OrderDetailDAO;
 import lk.ijse.PastryPal.DAO.custom.ProductDAO;
 import lk.ijse.PastryPal.DB.DbConnection;
 import lk.ijse.PastryPal.Entity.Order;
+import lk.ijse.PastryPal.Entity.OrderDetail;
+import lk.ijse.PastryPal.Entity.Product;
+import lk.ijse.PastryPal.dto.OrderDetailDto;
 import lk.ijse.PastryPal.dto.OrderDto;
+import lk.ijse.PastryPal.dto.ProductDto;
+import lk.ijse.PastryPal.dto.tm.OrderTm;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
 
 public class OrderBOImpl implements OrderBO {
 
@@ -27,7 +33,7 @@ public class OrderBOImpl implements OrderBO {
     }
 
     @Override
-    public boolean placeOrder(OrderDto orderDto) throws SQLException {
+    public boolean placeOrder(OrderDto orderDto, List<OrderTm> orderDetailDto) throws SQLException {
         String orderId = orderDto.getOrder_id();
         LocalDate date = orderDto.getDate();
         String customerId = orderDto.getCustomer_id();
@@ -41,9 +47,11 @@ public class OrderBOImpl implements OrderBO {
             if (isOrderSaved){
                 boolean isUpdated = productDAO.updateProduct(orderDto.getOrderTmList());
                 if (isUpdated){
-                    boolean isOrderDetailSaved = orderDetailDAO.save(orderDto.getOrder_id(),orderDto.getOrderTmList());
-                    if (isOrderDetailSaved){
-                        connection.commit();
+                    for (OrderTm dto : orderDetailDto) {
+                        boolean isOrderDetailSaved = orderDetailDAO.save(new OrderDetail(orderId,dto.getProduct_id(),dto.getQty(),dto.getUnit_price()));
+                        if (isOrderDetailSaved){
+                            connection.commit();
+                        }
                     }
                 }
             }
