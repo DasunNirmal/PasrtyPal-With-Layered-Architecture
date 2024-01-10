@@ -45,9 +45,9 @@ public class OrderBOImpl implements OrderBO {
 
             boolean isOrderSaved = orderDAO.save(new Order(orderId,date,customerId));
             if (isOrderSaved){
-                boolean isUpdated = productDAO.updateProduct(orderDto.getOrderTmList());
+                for (OrderTm dto : orderDetailDto) {
+                boolean isUpdated = productDAO.updateQTY(new Product(dto.getProduct_id(), dto.getDescription(), dto.getQty(), dto.getUnit_price()));
                 if (isUpdated){
-                    for (OrderTm dto : orderDetailDto) {
                         boolean isOrderDetailSaved = orderDetailDAO.save(new OrderDetail(orderId,dto.getProduct_id(),dto.getQty(),dto.getUnit_price()));
                         if (isOrderDetailSaved){
                             connection.commit();

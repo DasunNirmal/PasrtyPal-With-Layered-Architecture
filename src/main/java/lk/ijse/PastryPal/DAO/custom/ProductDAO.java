@@ -11,7 +11,7 @@ public interface ProductDAO extends CrudDAO<Product> {
 
     Product searchProductByName(String searchName) throws SQLException, ClassNotFoundException;
 
-    boolean updateProduct(List<OrderTm> orderTmList) throws SQLException, ClassNotFoundException;
-
     String[] getProductsByName(String searchTerm) throws SQLException, ClassNotFoundException;
+
+    boolean updateQTY(Product entity) throws SQLException, ClassNotFoundException;
 }

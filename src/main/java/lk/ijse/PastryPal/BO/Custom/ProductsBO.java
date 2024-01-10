@@ -1,6 +1,7 @@
 package lk.ijse.PastryPal.BO.Custom;
 
 import lk.ijse.PastryPal.BO.SuperBO;
+import lk.ijse.PastryPal.Entity.Product;
 import lk.ijse.PastryPal.dto.ProductDto;
 
 import java.sql.SQLException;
@@ -25,4 +26,5 @@ public interface ProductsBO extends SuperBO {
     String[] getProductsByName(String searchTerm) throws SQLException, ClassNotFoundException;
 
     String getTotalProducts() throws SQLException, ClassNotFoundException;
+
 }

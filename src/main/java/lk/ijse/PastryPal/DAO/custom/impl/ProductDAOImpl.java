@@ -107,20 +107,6 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     @Override
-    public boolean updateProduct(List<OrderTm> orderTmList) throws SQLException, ClassNotFoundException {
-        for (OrderTm tm: orderTmList){
-            if (!updateQty(tm.getProduct_id(),tm.getQty())){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean updateQty(String productId, int qty) throws SQLException, ClassNotFoundException {
-        return SQLUtil.execute("UPDATE products SET qty = qty - ? WHERE product_id = ?",qty,productId);
-    }
-
-    @Override
     public String[] getProductsByName(String searchTerm) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM products WHERE description LIKE ?",
                 "%" + searchTerm + "%");
@@ -131,6 +117,12 @@ public class ProductDAOImpl implements ProductDAO {
             productNames.add(name);
         }
         return productNames.toArray(new String[0]);
+    }
+
+    @Override
+    public boolean updateQTY(Product entity) throws SQLException, ClassNotFoundException {
+        return SQLUtil.execute("UPDATE products SET qty = qty - ? WHERE product_id = ?",entity.getQty(),entity.getProduct_id());
+
     }
 
     @Override
