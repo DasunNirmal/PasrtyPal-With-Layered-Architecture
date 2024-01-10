@@ -10,5 +10,4 @@ import java.util.List;
 
 public interface OrderDetailDAO extends CrudDAO<OrderDetail> {
 
-    boolean save(OrderDetail entity) throws SQLException, ClassNotFoundException;
 }
