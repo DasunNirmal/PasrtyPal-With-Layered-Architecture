@@ -12,6 +12,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
+import lk.ijse.PastryPal.BO.BOFactory;
+import lk.ijse.PastryPal.BO.Custom.ComplainBO;
+import lk.ijse.PastryPal.BO.Custom.CustomerBO;
+import lk.ijse.PastryPal.BO.Custom.OrderBO;
 import lk.ijse.PastryPal.DAO.custom.ComplainDAO;
 import lk.ijse.PastryPal.DAO.custom.CustomerDAO;
 import lk.ijse.PastryPal.DAO.custom.DashBoardDAO;
@@ -81,9 +85,11 @@ public class DashboardFormController {
     private TableView<DetailsTm> tblOrderDetails;
 
     JoinQueryDAO joinQueryDAO = new JoinQueryDAOImpl();
-    ComplainDAO complainDAO = new ComplainDAOImpl();
-    CustomerDAO customerDAO = new CustomerDAOImpl();
+    ComplainBO complainDAO = (ComplainBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.COMPLAIN);
+    CustomerBO customerDAO = (CustomerBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.CUSTOMER);
+    OrderBO orderBO = (OrderBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ORDER);
     DashBoardDAO dashBoardDAO = new DashBoardDAOImpl();
+
     private ObservableList<DetailsTm> obList = FXCollections.observableArrayList();
 
     public void initialize() throws SQLException {
@@ -97,44 +103,44 @@ public class DashboardFormController {
         loadAllDetails();
     }
 
-    private void totalComplains() throws SQLException {
+    private void totalComplains() {
         try {
-            String getComplains = complainDAO.getTotal();
+            String getComplains = complainDAO.getTotalComplains();
             lblTotalComplains.setText(String.valueOf(getComplains));
         } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void totalCustomers() throws SQLException {
+    private void totalCustomers() {
         try {
-            String totalCustomers = customerDAO.getTotal();
+            String totalCustomers = customerDAO.getTotalCustomer();
             lblTotalCustomers.setText(String.valueOf(totalCustomers));
         } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     private void countOrdersByDate() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT COUNT(*) FROM orders WHERE DATE(order_date) = CURDATE();";
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        int count = resultSet.getInt(1);
-        lblOrdersByDate.setText(String.valueOf(count));
+        try {
+            String ordersByDate = orderBO.getOrdersByDate();
+            lblOrdersByDate.setText(String.valueOf(ordersByDate));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void countOrders() throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT count(*) FROM orders";
-        ResultSet resultSet = statement.executeQuery(sql);
-        resultSet.next();
-        int count = resultSet.getInt(1);
-        lblTotalOrders.setText(String.valueOf(count));
+        try {
+            String totalOrders = orderBO.getTotalOrders();
+            lblTotalOrders.setText(String.valueOf(totalOrders));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
     private void TotalSales() throws SQLException {
         try {

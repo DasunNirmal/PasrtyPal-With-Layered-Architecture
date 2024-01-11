@@ -63,4 +63,14 @@ public class OrderBOImpl implements OrderBO {
         }
         return true;
     }
+
+    @Override
+    public String getOrdersByDate() throws SQLException, ClassNotFoundException {
+        return orderDAO.getTotalOrdersByDate();
+    }
+
+    @Override
+    public String getTotalOrders() throws SQLException, ClassNotFoundException {
+        return orderDAO.getTotal();
+    }
 }

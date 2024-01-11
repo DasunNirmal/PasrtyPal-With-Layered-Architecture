@@ -12,4 +12,8 @@ public interface OrderBO extends SuperBO {
     String generateNextID() throws SQLException, ClassNotFoundException;
 
     boolean placeOrder(OrderDto orderDto, List<OrderTm> orderDetailDto) throws SQLException;
+
+    String getOrdersByDate() throws SQLException, ClassNotFoundException;
+
+    String getTotalOrders() throws SQLException, ClassNotFoundException;
 }

@@ -11,6 +11,7 @@ import lk.ijse.PastryPal.dto.OrderDto;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -68,6 +69,15 @@ public class OrderDAOImpl implements OrderDAO {
 
     @Override
     public String getTotal() throws SQLException, ClassNotFoundException {
-        return null;
+        ResultSet resultSet = SQLUtil.execute("SELECT count(*) FROM orders");
+        resultSet.next();
+        return resultSet.getString(1);
+    }
+
+    @Override
+    public String getTotalOrdersByDate() throws SQLException, ClassNotFoundException {
+        ResultSet resultSet = SQLUtil.execute("SELECT COUNT(*) FROM orders WHERE DATE(order_date) = CURDATE();");
+        resultSet.next();
+        return resultSet.getString(1);
     }
 }
