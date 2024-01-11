@@ -11,6 +11,7 @@ import java.util.List;
 
 public class JoinQueryDAOImpl implements JoinQueryDAO {
 
+    @Override
     public List<DetailsDto> getAllDetails() throws SQLException, ClassNotFoundException {
 
         ResultSet resultSet = SQLUtil.execute("SELECT \n" +

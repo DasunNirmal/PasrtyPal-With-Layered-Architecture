@@ -9,15 +9,18 @@ import java.sql.SQLException;
 
 public class RegistrationDAOImpl implements RegistrationDAO {
 
+    @Override
     public boolean saveUser(RegistrationDto dto) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("INSERT INTO users VALUES (?,?)",dto.getUser_name(),dto.getPassword());
     }
 
+    @Override
     public boolean isValidUser(String userName, String pw) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM users WHERE user_name = ? AND password = ?",userName,pw);
         return resultSet.next();
     }
 
+    @Override
     public RegistrationDto getUserInfo(String userName) throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM users WHERE user_name = ?",userName);
         if (resultSet.next()) {
@@ -29,6 +32,7 @@ public class RegistrationDAOImpl implements RegistrationDAO {
         return null; // User isn't found
     }
 
+    @Override
     public boolean check(String userName, String pw) throws SQLException, ClassNotFoundException {
         return isValidUser(userName,pw);
     }

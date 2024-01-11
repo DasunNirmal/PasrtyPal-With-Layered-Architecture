@@ -22,6 +22,7 @@ public class ItemDAOImpl implements ItemDAO {
             return "I001";
         }
     }
+    @Override
     public String generateNextID() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT item_id FROM items ORDER BY item_id DESC LIMIT 1");
         if (resultSet.next()){
@@ -30,15 +31,18 @@ public class ItemDAOImpl implements ItemDAO {
         return splitItemID(null);
     }
 
+    @Override
     public boolean save(Item entity) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("INSERT INTO items VALUES (?,?,?,?,?,?)",entity.getItem_id(),entity.getProduct_name(),
                 entity.getQty(),entity.getSupplier_id(),entity.getSupplier_name(),entity.getSupplier_phone_number());
     }
 
+    @Override
     public boolean delete(String id) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("DELETE FROM items WHERE item_id = ?",id);
     }
 
+    @Override
     public boolean update(Item entity) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("UPDATE items SET product_name = ?, qty = ?, supplier_id = ?, supplier_name = ?, supplier_phone_number = ? WHERE item_id = ?",
                 entity.getProduct_name(),entity.getQty(),entity.getSupplier_id(),entity.getProduct_name(),entity.getSupplier_phone_number(),
@@ -55,6 +59,7 @@ public class ItemDAOImpl implements ItemDAO {
         return null;
     }
 
+    @Override
     public List<Item> getAll() throws SQLException, ClassNotFoundException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM items");
 

@@ -11,6 +11,7 @@ import java.util.List;
 
 public class OrderDetailDAOImpl implements OrderDetailDAO {
 
+    @Override
     public boolean save(OrderDetail entity) throws SQLException, ClassNotFoundException {
         return SQLUtil.execute("INSERT INTO order_details VALUES (?,?,?,?)",entity.getOrder_id(),
                 entity.getProduct_id(),entity.getQty(),entity.getUnit_price());
